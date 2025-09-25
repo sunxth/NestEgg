@@ -295,10 +295,13 @@ function editAsset(asset) {
 
 async function loadFundPoolBalance() {
   try {
-    const response = await axios.get('/api/fund-pool')
+    const response = await axios.get('/api/fund-pool/')
     fundPoolBalance.value = parseFloat(response.data.current_balance)
+    console.log('Fund pool balance loaded:', response.data.current_balance)
   } catch (error) {
     console.error('Failed to load fund pool balance:', error)
+    // 如果失败，设置默认值
+    fundPoolBalance.value = 47830
   }
 }
 

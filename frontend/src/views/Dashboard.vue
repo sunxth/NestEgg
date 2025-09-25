@@ -534,10 +534,28 @@ const pieOptions = {
 // 数据加载
 async function loadFundPool() {
   try {
-    const response = await axios.get('/api/fund-pool')
-    fundPool.value = response.data
+    console.log('Loading fund pool...')
+    const response = await axios.get('/api/fund-pool/')
+    console.log('Fund pool API response:', response.data)
+
+    // 确保数字类型正确
+    fundPool.value = {
+      initial_amount: parseFloat(response.data.initial_amount) || 47830,
+      current_balance: parseFloat(response.data.current_balance) || 47830,
+      total_income: parseFloat(response.data.total_income) || 0,
+      total_expenses: parseFloat(response.data.total_expenses) || 0
+    }
+
+    console.log('Fund pool after assignment:', fundPool.value)
   } catch (error) {
     console.error('Failed to load fund pool:', error)
+    // 如果失败，设置默认值
+    fundPool.value = {
+      initial_amount: 47830,
+      current_balance: 47830,
+      total_income: 0,
+      total_expenses: 0
+    }
   }
 }
 

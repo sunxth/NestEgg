@@ -3,7 +3,46 @@
     <h1 class="text-2xl font-bold text-gray-900 mb-8">设置</h1>
 
     <div class="bg-white shadow sm:rounded-lg">
-      <div class="px-4 py-5 sm:p-6">
+      <!-- 资金池设置（仅管理员） -->
+      <div v-if="authStore.isAdmin" class="px-4 py-5 sm:p-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">资金池设置</h3>
+
+        <div class="space-y-4">
+          <div>
+            <label for="initial-amount" class="block text-sm font-medium text-gray-700">
+              初始资金
+            </label>
+            <div class="mt-1 flex rounded-md shadow-sm">
+              <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+                ¥
+              </span>
+              <input
+                id="initial-amount"
+                v-model.number="initialAmount"
+                type="number"
+                step="0.01"
+                class="flex-1 block w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="47830.00"
+              />
+            </div>
+            <p class="mt-2 text-sm text-gray-500">
+              设置资金池的初始金额，当前：¥{{ currentInitialAmount.toFixed(2) }}
+            </p>
+          </div>
+
+          <div>
+            <button
+              @click="updateFundPool"
+              :disabled="!initialAmount || initialAmount === currentInitialAmount"
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              更新初始资金
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
         <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">数据导出</h3>
 
         <div class="space-y-4">
@@ -90,7 +129,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useTransactionStore } from '@/stores/transaction'
 import axios from 'axios'
@@ -99,6 +138,8 @@ const authStore = useAuthStore()
 const transactionStore = useTransactionStore()
 
 const message = ref(null)
+const initialAmount = ref(null)
+const currentInitialAmount = ref(47830)
 
 async function exportCSV() {
   const result = await transactionStore.exportCSV()
@@ -133,4 +174,35 @@ function showMessage(text, type) {
     message.value = null
   }, 3000)
 }
+
+async function loadFundPool() {
+  try {
+    const response = await axios.get('/api/fund-pool/')
+    currentInitialAmount.value = parseFloat(response.data.initial_amount)
+    initialAmount.value = currentInitialAmount.value
+  } catch (error) {
+    console.error('Failed to load fund pool:', error)
+  }
+}
+
+async function updateFundPool() {
+  try {
+    const response = await axios.put('/api/fund-pool/reset', {
+      initial_amount: initialAmount.value
+    })
+    currentInitialAmount.value = initialAmount.value
+    showMessage('资金池初始金额已更新', 'success')
+
+    // 刷新页面数据
+    window.location.reload()
+  } catch (error) {
+    showMessage('更新失败：' + (error.response?.data?.detail || '未知错误'), 'error')
+  }
+}
+
+onMounted(() => {
+  if (authStore.isAdmin) {
+    loadFundPool()
+  }
+})
 </script>

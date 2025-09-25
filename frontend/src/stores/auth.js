@@ -15,10 +15,11 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function login(password) {
+  async function login(password, role = null) {
     try {
       const formData = new FormData()
-      formData.append('username', 'user')
+      // Send role-specific username
+      formData.append('username', role === 'admin' ? 'husband' : 'wife')
       formData.append('password', password)
 
       const response = await axios.post('/api/auth/login', formData)
@@ -33,9 +34,15 @@ export const useAuthStore = defineStore('auth', () => {
 
       return { success: true }
     } catch (error) {
+      let errorMessage = '登录失败'
+      if (error.response?.status === 401) {
+        errorMessage = '密码错误，请重试'
+      } else if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail
+      }
       return {
         success: false,
-        message: error.response?.data?.detail || '登录失败'
+        message: errorMessage
       }
     }
   }

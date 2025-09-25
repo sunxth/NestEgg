@@ -65,9 +65,14 @@ async def get_fund_pool(
     )
 
 
+from pydantic import BaseModel
+
+class FundPoolReset(BaseModel):
+    initial_amount: Decimal
+
 @router.put("/reset")
 async def reset_fund_pool(
-    initial_amount: Decimal,
+    data: FundPoolReset,
     session: Session = Depends(get_session),
     current_user: TokenData = Depends(require_admin)
 ):
@@ -75,14 +80,14 @@ async def reset_fund_pool(
     fund_pool = session.exec(select(FundPool)).first()
     if not fund_pool:
         fund_pool = FundPool(
-            initial_amount=initial_amount,
-            current_balance=initial_amount
+            initial_amount=data.initial_amount,
+            current_balance=data.initial_amount
         )
     else:
-        fund_pool.initial_amount = initial_amount
+        fund_pool.initial_amount = data.initial_amount
         fund_pool.last_updated = datetime.now()
 
     session.add(fund_pool)
     session.commit()
 
-    return {"message": "Fund pool reset successfully", "initial_amount": initial_amount}
+    return {"message": "Fund pool reset successfully", "initial_amount": data.initial_amount}
