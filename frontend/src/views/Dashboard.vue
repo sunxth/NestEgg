@@ -9,39 +9,8 @@
         </div>
       </div>
 
-      <!-- 核心指标区 - 三大指标横向排列 -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <!-- 预算进度 -->
-        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-sm text-gray-500">月度预算</span>
-            <button v-if="authStore.isAdmin" @click="showBudgetModal = true"
-                    class="text-xs text-gray-400 hover:text-indigo-600">
-              设置
-            </button>
-          </div>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-2xl font-bold text-gray-900">{{ budgetPercentage }}%</p>
-              <p class="text-xs text-gray-500 mt-1">
-                剩余 ¥{{ Math.abs(budgetRemaining).toFixed(0) }}
-              </p>
-            </div>
-            <div class="relative">
-              <svg class="transform -rotate-90 w-14 h-14">
-                <circle cx="28" cy="28" r="24" stroke="#f3f4f6" stroke-width="4" fill="none" />
-                <circle cx="28" cy="28" r="24"
-                        :stroke="budgetPercentage > 80 ? '#ef4444' : budgetPercentage > 60 ? '#f59e0b' : '#10b981'"
-                        stroke-width="4" fill="none"
-                        :stroke-dasharray="`${2 * Math.PI * 24}`"
-                        :stroke-dashoffset="`${2 * Math.PI * 24 * (1 - budgetPercentage / 100)}`"
-                        stroke-linecap="round"
-                        class="transition-all duration-500" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
+      <!-- 核心指标区 - 两大指标横向排列 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <!-- 净收入 -->
         <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
           <div class="mb-2">
@@ -259,7 +228,7 @@
               </div>
               <p class="text-sm font-medium"
                  :class="transaction.type === 'income' ? 'text-green-600' : 'text-red-600'">
-                {{ transaction.type === 'income' ? '+' : '-' }}¥{{ transaction.amount.toFixed(2) }}
+                {{ transaction.type === 'income' ? '+' : '-' }}¥{{ parseFloat(transaction.amount).toFixed(2) }}
               </p>
             </div>
           </div>
@@ -288,42 +257,6 @@
       @close="showAddModal = false"
       @success="handleAddSuccess"
     />
-
-    <!-- 预算设置弹窗 -->
-    <Transition name="modal">
-      <div v-if="showBudgetModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-6 max-w-sm w-full mx-4 shadow-xl">
-          <h3 class="text-lg font-medium text-gray-900 mb-4">设置月度预算</h3>
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm text-gray-600 mb-1">预算金额</label>
-              <input
-                v-model.number="tempBudget"
-                type="number"
-                min="0"
-                step="100"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="请输入预算金额"
-              />
-            </div>
-            <div class="flex gap-3 justify-end">
-              <button
-                @click="showBudgetModal = false"
-                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                取消
-              </button>
-              <button
-                @click="saveBudget"
-                class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors"
-              >
-                保存
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Transition>
   </div>
 </template>
 
@@ -345,7 +278,7 @@ import {
   Filler
 } from 'chart.js'
 import AddTransactionModal from '@/components/AddTransactionModal.vue'
-import axios from 'axios'
+import axios from '@/utils/axios'
 
 ChartJS.register(
   CategoryScale,
@@ -371,12 +304,9 @@ const fundPool = ref({
 })
 
 const showAddModal = ref(false)
-const showBudgetModal = ref(false)
 const showQuickStats = ref(false)
 const trendPeriod = ref('7d')
 
-const monthlyBudget = ref(10000)
-const tempBudget = ref(10000)
 const monthlyExpense = ref(0)
 const monthlyIncome = ref(0)
 const todayExpense = ref(0)
@@ -390,15 +320,6 @@ const categoryData = ref(null)
 const currentMonth = computed(() => {
   const date = new Date()
   return `${date.getFullYear()}年${date.getMonth() + 1}月`
-})
-
-const budgetPercentage = computed(() => {
-  if (monthlyBudget.value === 0) return 0
-  return Math.min(100, Math.round((monthlyExpense.value / monthlyBudget.value) * 100))
-})
-
-const budgetRemaining = computed(() => {
-  return monthlyBudget.value - monthlyExpense.value
 })
 
 const monthlyNet = computed(() => {
@@ -664,12 +585,6 @@ async function loadStatistics() {
   }
 }
 
-function saveBudget() {
-  monthlyBudget.value = tempBudget.value
-  showBudgetModal.value = false
-  localStorage.setItem('monthlyBudget', monthlyBudget.value.toString())
-}
-
 function handleAddSuccess() {
   showAddModal.value = false
   loadData()
@@ -682,12 +597,6 @@ async function loadData() {
 }
 
 onMounted(() => {
-  const savedBudget = localStorage.getItem('monthlyBudget')
-  if (savedBudget) {
-    monthlyBudget.value = parseFloat(savedBudget)
-    tempBudget.value = parseFloat(savedBudget)
-  }
-
   loadData()
 })
 </script>
