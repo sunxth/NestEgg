@@ -26,7 +26,7 @@
       x="105"
       y="60"
       font-family="Arial, sans-serif"
-      font-size="30"
+      :font-size="isCompact ? '24' : '30'"
       font-weight="bold"
       fill="url(#grad1)"
     >
@@ -34,6 +34,7 @@
     </text>
 
     <text
+      v-if="!isCompact"
       x="105"
       y="80"
       font-family="Arial, sans-serif"
@@ -46,7 +47,9 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue'
+
+const props = defineProps({
   width: {
     type: [String, Number],
     default: 120
@@ -54,7 +57,16 @@ defineProps({
   height: {
     type: [String, Number],
     default: 60
+  },
+  compact: {
+    type: Boolean,
+    default: false
   }
+})
+
+// 根据尺寸判断是否为紧凑模式
+const isCompact = computed(() => {
+  return props.compact || props.height <= 50
 })
 </script>
 
