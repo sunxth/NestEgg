@@ -144,6 +144,18 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useTransactionStore } from '@/stores/transaction'
+import {
+  Squares2X2Icon,
+  TruckIcon,
+  ShoppingBagIcon,
+  BoltIcon,
+  FilmIcon,
+  HeartIcon,
+  AcademicCapIcon,
+  FolderIcon,
+  BanknotesIcon,
+  GiftIcon
+} from '@heroicons/vue/24/outline'
 
 const props = defineProps({
   transaction: {
@@ -154,6 +166,24 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'success'])
 const transactionStore = useTransactionStore()
+
+// 分类配置
+const expenseCategories = [
+  { value: 'food', label: '餐饮', icon: Squares2X2Icon },
+  { value: 'transport', label: '交通', icon: TruckIcon },
+  { value: 'shopping', label: '购物', icon: ShoppingBagIcon },
+  { value: 'utilities', label: '水电', icon: BoltIcon },
+  { value: 'entertainment', label: '娱乐', icon: FilmIcon },
+  { value: 'medical', label: '医疗', icon: HeartIcon },
+  { value: 'education', label: '教育', icon: AcademicCapIcon },
+  { value: 'other', label: '其他', icon: FolderIcon }
+]
+
+const incomeCategories = [
+  { value: 'salary', label: '工资', icon: BanknotesIcon },
+  { value: 'bonus', label: '奖金', icon: GiftIcon },
+  { value: 'other', label: '其他', icon: FolderIcon }
+]
 
 const loading = ref(false)
 const error = ref('')

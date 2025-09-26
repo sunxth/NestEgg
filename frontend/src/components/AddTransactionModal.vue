@@ -61,30 +61,39 @@
           <!-- Category -->
           <div class="mb-5">
             <label class="mb-2 block text-sm font-medium text-gray-700">分类</label>
-            <div class="relative">
-              <select
-                v-model="form.category"
-                required
-                class="w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 py-3 pl-4 pr-10 text-sm font-medium text-gray-900 transition-all duration-200 hover:bg-gray-100 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-              >
-                <option v-if="form.type === 'expense'" value="" disabled>支出分类</option>
-                <option v-if="form.type === 'expense'" value="food">🍔 餐饮</option>
-                <option v-if="form.type === 'expense'" value="transport">🚗 交通</option>
-                <option v-if="form.type === 'expense'" value="shopping">🛍️ 购物</option>
-                <option v-if="form.type === 'expense'" value="utilities">💡 水电</option>
-                <option v-if="form.type === 'expense'" value="entertainment">🎮 娱乐</option>
-                <option v-if="form.type === 'expense'" value="medical">🏥 医疗</option>
-                <option v-if="form.type === 'expense'" value="education">📚 教育</option>
-                <option v-if="form.type === 'expense'" value="other">📦 其他</option>
-
-                <option v-if="form.type === 'income'" value="" disabled>收入分类</option>
-                <option v-if="form.type === 'income'" value="salary">💰 工资</option>
-                <option v-if="form.type === 'income'" value="bonus">🎁 奖金</option>
-                <option v-if="form.type === 'income'" value="other">📦 其他</option>
-              </select>
-              <svg class="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-              </svg>
+            <div class="grid grid-cols-4 gap-3">
+              <template v-if="form.type === 'expense'">
+                <button
+                  v-for="category in expenseCategories"
+                  :key="category.value"
+                  type="button"
+                  @click="form.category = category.value"
+                  :class="{
+                    'bg-indigo-50 border-indigo-200 text-indigo-700': form.category === category.value,
+                    'bg-white border-gray-200 text-gray-600 hover:bg-gray-50': form.category !== category.value
+                  }"
+                  class="flex flex-col items-center justify-center p-3 border rounded-xl transition-all duration-200 hover:border-indigo-300"
+                >
+                  <component :is="category.icon" class="w-5 h-5 mb-1" />
+                  <span class="text-xs font-medium">{{ category.label }}</span>
+                </button>
+              </template>
+              <template v-if="form.type === 'income'">
+                <button
+                  v-for="category in incomeCategories"
+                  :key="category.value"
+                  type="button"
+                  @click="form.category = category.value"
+                  :class="{
+                    'bg-green-50 border-green-200 text-green-700': form.category === category.value,
+                    'bg-white border-gray-200 text-gray-600 hover:bg-gray-50': form.category !== category.value
+                  }"
+                  class="flex flex-col items-center justify-center p-3 border rounded-xl transition-all duration-200 hover:border-green-300"
+                >
+                  <component :is="category.icon" class="w-5 h-5 mb-1" />
+                  <span class="text-xs font-medium">{{ category.label }}</span>
+                </button>
+              </template>
             </div>
           </div>
 
@@ -145,12 +154,42 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useTransactionStore } from '@/stores/transaction'
+import {
+  Squares2X2Icon,
+  TruckIcon,
+  ShoppingBagIcon,
+  BoltIcon,
+  FilmIcon,
+  HeartIcon,
+  AcademicCapIcon,
+  FolderIcon,
+  BanknotesIcon,
+  GiftIcon
+} from '@heroicons/vue/24/outline'
 
 const emit = defineEmits(['close', 'success'])
 const transactionStore = useTransactionStore()
 
 const loading = ref(false)
 const error = ref('')
+
+// 分类配置
+const expenseCategories = [
+  { value: 'food', label: '餐饮', icon: Squares2X2Icon },
+  { value: 'transport', label: '交通', icon: TruckIcon },
+  { value: 'shopping', label: '购物', icon: ShoppingBagIcon },
+  { value: 'utilities', label: '水电', icon: BoltIcon },
+  { value: 'entertainment', label: '娱乐', icon: FilmIcon },
+  { value: 'medical', label: '医疗', icon: HeartIcon },
+  { value: 'education', label: '教育', icon: AcademicCapIcon },
+  { value: 'other', label: '其他', icon: FolderIcon }
+]
+
+const incomeCategories = [
+  { value: 'salary', label: '工资', icon: BanknotesIcon },
+  { value: 'bonus', label: '奖金', icon: GiftIcon },
+  { value: 'other', label: '其他', icon: FolderIcon }
+]
 
 const form = ref({
   type: 'expense',
