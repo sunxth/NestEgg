@@ -27,7 +27,7 @@
         <div class="mb-4">
           <div class="flex flex-wrap gap-2">
             <button
-              @click="filters.type = ''"
+              @click="selectAllTypes"
               :class="{
                 'bg-indigo-600 text-white': filters.type === '',
                 'bg-gray-100 text-gray-700 hover:bg-gray-200': filters.type !== ''
@@ -278,6 +278,12 @@ const categoryLabels = {
 
 function getCategoryLabel(category) {
   return categoryLabels[category] || category
+}
+
+// 选择"所有类型"时，清除分类筛选
+function selectAllTypes() {
+  filters.value.type = ''
+  filters.value.category = ''
 }
 
 async function loadTransactions() {
