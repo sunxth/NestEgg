@@ -70,9 +70,9 @@
                   @click="form.category = category.value"
                   :class="{
                     'bg-indigo-50 border-indigo-200 text-indigo-700': form.category === category.value,
-                    'bg-white border-gray-200 text-gray-600 hover:bg-gray-50': form.category !== category.value
+                    'bg-white border-gray-200 text-gray-600': form.category !== category.value
                   }"
-                  class="flex flex-col items-center justify-center p-3 border rounded-xl transition-all duration-200 hover:border-indigo-300"
+                  class="flex flex-col items-center justify-center p-3 border rounded-xl transition-colors duration-150 hover:border-indigo-300 hover:scale-105"
                 >
                   <component :is="category.icon" class="w-5 h-5 mb-1" />
                   <span class="text-xs font-medium">{{ category.label }}</span>
@@ -86,9 +86,9 @@
                   @click="form.category = category.value"
                   :class="{
                     'bg-green-50 border-green-200 text-green-700': form.category === category.value,
-                    'bg-white border-gray-200 text-gray-600 hover:bg-gray-50': form.category !== category.value
+                    'bg-white border-gray-200 text-gray-600': form.category !== category.value
                   }"
-                  class="flex flex-col items-center justify-center p-3 border rounded-xl transition-all duration-200 hover:border-green-300"
+                  class="flex flex-col items-center justify-center p-3 border rounded-xl transition-colors duration-150 hover:border-green-300 hover:scale-105"
                 >
                   <component :is="category.icon" class="w-5 h-5 mb-1" />
                   <span class="text-xs font-medium">{{ category.label }}</span>
