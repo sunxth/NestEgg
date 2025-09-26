@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import axios from 'axios'
+import axios from '@/utils/axios'
 
 export const useAuthStore = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token') || '')
@@ -8,12 +8,6 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => !!token.value)
   const isAdmin = computed(() => userRole.value === 'admin')
-
-  function setAuthHeader() {
-    if (token.value) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token.value}`
-    }
-  }
 
   async function login(password, role = null) {
     try {
@@ -30,7 +24,6 @@ export const useAuthStore = defineStore('auth', () => {
 
       localStorage.setItem('token', token.value)
       localStorage.setItem('userRole', userRole.value)
-      setAuthHeader()
 
       return { success: true }
     } catch (error) {
@@ -52,10 +45,7 @@ export const useAuthStore = defineStore('auth', () => {
     userRole.value = ''
     localStorage.removeItem('token')
     localStorage.removeItem('userRole')
-    delete axios.defaults.headers.common['Authorization']
   }
-
-  setAuthHeader()
 
   return {
     token,

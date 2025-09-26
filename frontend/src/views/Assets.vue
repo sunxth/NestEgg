@@ -168,7 +168,7 @@ import {
   Legend
 } from 'chart.js'
 import { useAuthStore } from '@/stores/auth'
-import axios from 'axios'
+import axios from '@/utils/axios'
 
 ChartJS.register(
   CategoryScale,

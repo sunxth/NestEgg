@@ -67,21 +67,20 @@
                 required
                 class="w-full appearance-none rounded-xl border border-gray-200 bg-gray-50 py-3 pl-4 pr-10 text-sm font-medium text-gray-900 transition-all duration-200 hover:bg-gray-100 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               >
-                <optgroup v-if="form.type === 'expense'" label="支出分类">
-                  <option value="food">🍔 餐饮</option>
-                  <option value="transport">🚗 交通</option>
-                  <option value="shopping">🛍️ 购物</option>
-                  <option value="utilities">💡 水电</option>
-                  <option value="entertainment">🎮 娱乐</option>
-                  <option value="medical">🏥 医疗</option>
-                  <option value="education">📚 教育</option>
-                  <option value="other">📦 其他</option>
-                </optgroup>
-                <optgroup v-if="form.type === 'income'" label="收入分类">
-                  <option value="salary">💰 工资</option>
-                  <option value="bonus">🎁 奖金</option>
-                  <option value="other">📦 其他</option>
-                </optgroup>
+                <option v-if="form.type === 'expense'" value="" disabled>支出分类</option>
+                <option v-if="form.type === 'expense'" value="food">🍔 餐饮</option>
+                <option v-if="form.type === 'expense'" value="transport">🚗 交通</option>
+                <option v-if="form.type === 'expense'" value="shopping">🛍️ 购物</option>
+                <option v-if="form.type === 'expense'" value="utilities">💡 水电</option>
+                <option v-if="form.type === 'expense'" value="entertainment">🎮 娱乐</option>
+                <option v-if="form.type === 'expense'" value="medical">🏥 医疗</option>
+                <option v-if="form.type === 'expense'" value="education">📚 教育</option>
+                <option v-if="form.type === 'expense'" value="other">📦 其他</option>
+
+                <option v-if="form.type === 'income'" value="" disabled>收入分类</option>
+                <option v-if="form.type === 'income'" value="salary">💰 工资</option>
+                <option v-if="form.type === 'income'" value="bonus">🎁 奖金</option>
+                <option v-if="form.type === 'income'" value="other">📦 其他</option>
               </select>
               <svg class="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -193,10 +192,18 @@ watch(() => form.value.type, (newType, oldType) => {
 
 async function handleSubmit() {
   error.value = ''
+
+  // Validate amount
+  if (!form.value.amount || form.value.amount <= 0) {
+    error.value = '请输入有效的金额'
+    return
+  }
+
   loading.value = true
 
   const result = await transactionStore.updateTransaction(props.transaction.id, {
     ...form.value,
+    amount: parseFloat(form.value.amount), // Ensure amount is a number
     date: new Date(form.value.date).toISOString()
   })
 

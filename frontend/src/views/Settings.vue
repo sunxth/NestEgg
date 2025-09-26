@@ -132,7 +132,7 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useTransactionStore } from '@/stores/transaction'
-import axios from 'axios'
+import axios from '@/utils/axios'
 
 const authStore = useAuthStore()
 const transactionStore = useTransactionStore()

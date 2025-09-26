@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import axios from 'axios'
+import axios from '@/utils/axios'
 
 export const useTransactionStore = defineStore('transaction', () => {
   const transactions = ref([])
@@ -11,7 +11,7 @@ export const useTransactionStore = defineStore('transaction', () => {
   async function fetchTransactions(params = {}) {
     loading.value = true
     try {
-      const response = await axios.get('/api/transactions', { params })
+      const response = await axios.get('/api/transactions/', { params })
       transactions.value = response.data
       return { success: true }
     } catch (error) {
@@ -54,13 +54,29 @@ export const useTransactionStore = defineStore('transaction', () => {
 
   async function createTransaction(data) {
     try {
-      const response = await axios.post('/api/transactions', data)
+      const response = await axios.post('/api/transactions/', data)
       await fetchTransactions()
       return { success: true, data: response.data }
     } catch (error) {
+      console.error('Create transaction error:', error.response?.data)
+      // Handle validation errors
+      if (error.response?.data?.detail) {
+        if (Array.isArray(error.response.data.detail)) {
+          // FastAPI validation error format
+          const firstError = error.response.data.detail[0]
+          return {
+            success: false,
+            message: firstError.msg || '数据格式错误'
+          }
+        }
+        return {
+          success: false,
+          message: error.response.data.detail
+        }
+      }
       return {
         success: false,
-        message: error.response?.data?.detail || '创建记录失败'
+        message: '创建记录失败'
       }
     }
   }
