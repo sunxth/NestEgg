@@ -22,46 +22,59 @@
       </div>
 
       <!-- Filters -->
-      <div class="bg-white rounded-2xl shadow-sm p-4 mb-6">
-        <div class="flex items-center space-x-4">
-          <label class="text-sm font-medium text-gray-700">筛选：</label>
-
-          <div class="relative">
-            <select
-              v-model="filters.type"
-              @change="loadTransactions"
-              class="appearance-none bg-gray-100 rounded-lg px-4 py-2 pr-8 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors cursor-pointer"
+      <div class="bg-white rounded-2xl shadow-sm p-6 mb-6">
+        <!-- 类型筛选 -->
+        <div class="mb-4">
+          <div class="flex flex-wrap gap-2">
+            <button
+              @click="filters.type = ''"
+              :class="{
+                'bg-indigo-600 text-white': filters.type === '',
+                'bg-gray-100 text-gray-700 hover:bg-gray-200': filters.type !== ''
+              }"
+              class="px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150"
             >
-              <option value="">所有类型</option>
-              <option value="income">收入</option>
-              <option value="expense">支出</option>
-            </select>
-            <svg class="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
+              所有类型
+            </button>
+            <button
+              @click="filters.type = 'income'"
+              :class="{
+                'bg-green-600 text-white': filters.type === 'income',
+                'bg-gray-100 text-gray-700 hover:bg-gray-200': filters.type !== 'income'
+              }"
+              class="px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150"
+            >
+              收入
+            </button>
+            <button
+              @click="filters.type = 'expense'"
+              :class="{
+                'bg-red-600 text-white': filters.type === 'expense',
+                'bg-gray-100 text-gray-700 hover:bg-gray-200': filters.type !== 'expense'
+              }"
+              class="px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150"
+            >
+              支出
+            </button>
           </div>
+        </div>
 
-          <div class="relative">
-            <select
-              v-model="filters.category"
-              @change="loadTransactions"
-              class="appearance-none bg-gray-100 rounded-lg px-4 py-2 pr-8 text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors cursor-pointer"
+        <!-- 分类筛选 -->
+        <div>
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="cat in allCategories"
+              :key="cat.value"
+              @click="filters.category = filters.category === cat.value ? '' : cat.value"
+              :class="{
+                'bg-indigo-600 text-white': filters.category === cat.value,
+                'bg-gray-100 text-gray-700 hover:bg-gray-200': filters.category !== cat.value
+              }"
+              class="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-150"
             >
-              <option value="">所有分类</option>
-              <option value="food">餐饮</option>
-              <option value="transport">交通</option>
-              <option value="shopping">购物</option>
-              <option value="utilities">水电</option>
-              <option value="entertainment">娱乐</option>
-              <option value="medical">医疗</option>
-              <option value="education">教育</option>
-              <option value="salary">工资</option>
-              <option value="bonus">奖金</option>
-              <option value="other">其他</option>
-            </select>
-            <svg class="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-            </svg>
+              <component :is="cat.icon" class="w-4 h-4 mr-1.5" />
+              {{ cat.label }}
+            </button>
           </div>
         </div>
       </div>
@@ -173,11 +186,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useTransactionStore } from '@/stores/transaction'
 import AddTransactionModal from '@/components/AddTransactionModal.vue'
 import EditTransactionModal from '@/components/EditTransactionModal.vue'
+import {
+  Squares2X2Icon,
+  TruckIcon,
+  ShoppingBagIcon,
+  BoltIcon,
+  FilmIcon,
+  HeartIcon,
+  AcademicCapIcon,
+  FolderIcon,
+  BanknotesIcon,
+  GiftIcon
+} from '@heroicons/vue/24/outline'
 
 const authStore = useAuthStore()
 const transactionStore = useTransactionStore()
@@ -190,6 +215,25 @@ const filters = ref({
   type: '',
   category: ''
 })
+
+// 所有分类配置（对应数据库值）
+const allCategories = [
+  { value: 'food', label: '餐饮', icon: Squares2X2Icon },
+  { value: 'transport', label: '交通', icon: TruckIcon },
+  { value: 'shopping', label: '购物', icon: ShoppingBagIcon },
+  { value: 'utilities', label: '水电', icon: BoltIcon },
+  { value: 'entertainment', label: '娱乐', icon: FilmIcon },
+  { value: 'medical', label: '医疗', icon: HeartIcon },
+  { value: 'education', label: '教育', icon: AcademicCapIcon },
+  { value: 'salary', label: '工资', icon: BanknotesIcon },
+  { value: 'bonus', label: '奖金', icon: GiftIcon },
+  { value: 'other', label: '其他', icon: FolderIcon }
+]
+
+// 监听筛选变化
+watch(filters, () => {
+  loadTransactions()
+}, { deep: true })
 
 const categoryLabels = {
   food: '餐饮',
