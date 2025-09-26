@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8">
-      <div>
-        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          NestEgg 家庭记账
-        </h2>
+      <div class="text-center">
+        <div class="flex justify-center mb-6">
+          <Logo :width="200" :height="100" />
+        </div>
         <p class="mt-2 text-center text-sm text-gray-600">
           请选择您的身份
         </p>
@@ -134,6 +134,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import Logo from '@/components/Logo.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
