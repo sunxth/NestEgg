@@ -57,7 +57,6 @@ const navigation = [
   { name: '收支', href: '/cashflow' },
   { name: '日历', href: '/calendar' },
   { name: '统计', href: '/analytics' },
-  { name: '资产', href: '/assets' },
   { name: '设置', href: '/settings' }
 ]
 

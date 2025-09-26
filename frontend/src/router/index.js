@@ -7,7 +7,6 @@ import CashFlow from '@/views/CashFlow.vue'
 import Calendar from '@/views/Calendar.vue'
 import Statistics from '@/views/Statistics.vue'
 import Analytics from '@/views/Analytics.vue'
-import Assets from '@/views/Assets.vue'
 import Settings from '@/views/Settings.vue'
 
 const routes = [
@@ -51,12 +50,6 @@ const routes = [
     path: '/analytics',
     name: 'Analytics',
     component: Analytics,
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/assets',
-    name: 'Assets',
-    component: Assets,
     meta: { requiresAuth: true }
   },
   {
