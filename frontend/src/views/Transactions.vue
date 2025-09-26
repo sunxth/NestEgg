@@ -60,10 +60,10 @@
         </div>
 
         <!-- 分类筛选 -->
-        <div>
+        <div v-if="visibleCategories.length > 0">
           <div class="flex flex-wrap gap-2">
             <button
-              v-for="cat in allCategories"
+              v-for="cat in visibleCategories"
               :key="cat.value"
               @click="filters.category = filters.category === cat.value ? '' : cat.value"
               :class="{
@@ -186,7 +186,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useTransactionStore } from '@/stores/transaction'
 import AddTransactionModal from '@/components/AddTransactionModal.vue'
@@ -216,19 +216,47 @@ const filters = ref({
   category: ''
 })
 
-// 所有分类配置（对应数据库值）
-const allCategories = [
-  { value: 'food', label: '餐饮', icon: Squares2X2Icon },
-  { value: 'transport', label: '交通', icon: TruckIcon },
-  { value: 'shopping', label: '购物', icon: ShoppingBagIcon },
-  { value: 'utilities', label: '水电', icon: BoltIcon },
-  { value: 'entertainment', label: '娱乐', icon: FilmIcon },
-  { value: 'medical', label: '医疗', icon: HeartIcon },
-  { value: 'education', label: '教育', icon: AcademicCapIcon },
-  { value: 'salary', label: '工资', icon: BanknotesIcon },
-  { value: 'bonus', label: '奖金', icon: GiftIcon },
-  { value: 'other', label: '其他', icon: FolderIcon }
+// 支出分类配置
+const expenseCategories = [
+  { value: 'food', label: '餐饮', icon: Squares2X2Icon, type: 'expense' },
+  { value: 'transport', label: '交通', icon: TruckIcon, type: 'expense' },
+  { value: 'shopping', label: '购物', icon: ShoppingBagIcon, type: 'expense' },
+  { value: 'utilities', label: '水电', icon: BoltIcon, type: 'expense' },
+  { value: 'entertainment', label: '娱乐', icon: FilmIcon, type: 'expense' },
+  { value: 'medical', label: '医疗', icon: HeartIcon, type: 'expense' },
+  { value: 'education', label: '教育', icon: AcademicCapIcon, type: 'expense' },
+  { value: 'other', label: '其他', icon: FolderIcon, type: 'expense' }
 ]
+
+// 收入分类配置
+const incomeCategories = [
+  { value: 'salary', label: '工资', icon: BanknotesIcon, type: 'income' },
+  { value: 'bonus', label: '奖金', icon: GiftIcon, type: 'income' },
+  { value: 'other', label: '其他', icon: FolderIcon, type: 'income' }
+]
+
+// 根据类型筛选动态显示分类
+const visibleCategories = computed(() => {
+  if (filters.value.type === 'income') {
+    return incomeCategories
+  } else if (filters.value.type === 'expense') {
+    return expenseCategories
+  } else {
+    // 所有类型时，显示所有分类
+    return [...expenseCategories, ...incomeCategories]
+  }
+})
+
+// 监听类型变化，自动清除不匹配的分类
+watch(() => filters.value.type, (newType, oldType) => {
+  // 当切换类型时，如果当前选择的分类不属于新类型，则清空分类筛选
+  if (newType && filters.value.category) {
+    const categoryValid = visibleCategories.value.some(cat => cat.value === filters.value.category)
+    if (!categoryValid) {
+      filters.value.category = ''
+    }
+  }
+})
 
 // 监听筛选变化
 watch(filters, () => {
