@@ -11,7 +11,11 @@ export const useTransactionStore = defineStore('transaction', () => {
   async function fetchTransactions(params = {}) {
     loading.value = true
     try {
-      const response = await axios.get('/api/transactions/', { params })
+      // 过滤掉空字符串的参数，避免传递空值给后端
+      const cleanParams = Object.fromEntries(
+        Object.entries(params).filter(([_, value]) => value !== '' && value != null)
+      )
+      const response = await axios.get('/api/transactions/', { params: cleanParams })
       transactions.value = response.data
       return { success: true }
     } catch (error) {
