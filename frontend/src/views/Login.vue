@@ -3,7 +3,9 @@
     <div class="max-w-md w-full space-y-8">
       <div class="text-center">
         <div class="flex justify-center mb-6">
-          <Logo :width="300" :height="100" />
+          <div class="w-48 h-48 rounded-full overflow-hidden bg-white shadow-lg">
+            <Logo :width="192" :height="192" />
+          </div>
         </div>
         <p class="mt-2 text-center text-sm text-gray-600">
           请选择您的身份

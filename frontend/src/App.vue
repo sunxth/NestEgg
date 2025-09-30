@@ -5,7 +5,9 @@
         <div class="flex justify-between h-16">
           <div class="flex">
             <div class="flex-shrink-0 flex items-center">
-              <Logo :width="90" :height="45" compact />
+              <div class="w-12 h-12 rounded-full overflow-hidden bg-white shadow-sm">
+                <Logo :width="48" :height="48" />
+              </div>
             </div>
             <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
               <router-link
