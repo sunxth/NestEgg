@@ -17,7 +17,7 @@ async def get_transactions(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, le=1000),
     type: Optional[TransactionType] = None,
-    category: Optional[Category] = None,
+    category: Optional[str] = None,  # 支持多个分类，用逗号分隔
     start_date: Optional[datetime] = None,
     end_date: Optional[datetime] = None,
     session: Session = Depends(get_session),
@@ -29,7 +29,10 @@ async def get_transactions(
     if type:
         conditions.append(Transaction.type == type)
     if category:
-        conditions.append(Transaction.category == category)
+        # 支持多个分类筛选，用逗号分隔
+        categories = [c.strip() for c in category.split(',') if c.strip()]
+        if categories:
+            conditions.append(Transaction.category.in_(categories))
     if start_date:
         conditions.append(Transaction.date >= start_date)
     if end_date:

@@ -56,8 +56,7 @@ const authStore = useAuthStore()
 
 const navigation = [
   { name: '首页', href: '/' },
-  { name: '记账', href: '/transactions' },
-  { name: '收支', href: '/cashflow' },
+  { name: '交易', href: '/transactions' },
   { name: '日历', href: '/calendar' },
   { name: '统计', href: '/analytics' },
   { name: '设置', href: '/settings' }
