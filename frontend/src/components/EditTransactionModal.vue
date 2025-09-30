@@ -50,7 +50,8 @@
               <input
                 v-model.number="form.amount"
                 type="number"
-                step="0.01"
+                step="1"
+                min="0"
                 required
                 placeholder="0.00"
                 class="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-8 pr-4 text-sm font-medium text-gray-900 transition-all duration-200 placeholder:text-gray-400 hover:bg-gray-100 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"

@@ -3,7 +3,7 @@
     <div class="max-w-md w-full space-y-8">
       <div class="text-center">
         <div class="flex justify-center mb-6">
-          <Logo :width="200" :height="100" />
+          <Logo :width="300" :height="100" />
         </div>
         <p class="mt-2 text-center text-sm text-gray-600">
           请选择您的身份
@@ -20,9 +20,9 @@
           >
             <div class="flex flex-col items-center space-y-3">
               <!-- Husband Icon -->
-              <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                <svg class="w-12 h-12 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C13.1 2 14 2.9 14 4S13.1 6 12 6 10 5.1 10 4 10.9 2 12 2M15.89 8.11C15.5 7.72 14.83 7 13.53 7C13.32 7 13.11 7.04 12.88 7.08C12.27 6.7 11.56 6.5 10.83 6.5C9.84 6.5 8.89 6.81 8.07 7.36C7.85 7.29 7.61 7.24 7.37 7.24C6.64 7.24 5.96 7.65 5.61 8.32C5.24 9 5.31 9.83 5.79 10.41L7 11.62V19C7 20.1 7.9 21 9 21H11V16H13V21H15C16.1 21 17 20.1 17 19V11.62L18.21 10.41C18.69 9.83 18.76 9 18.39 8.32C18.04 7.65 17.36 7.24 16.63 7.24C16.39 7.24 16.15 7.29 15.89 8.11Z"/>
+              <div class="w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center group-hover:from-blue-200 group-hover:to-blue-300 transition-all shadow-inner">
+                <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
                 </svg>
               </div>
               <div class="text-center">
@@ -39,9 +39,9 @@
           >
             <div class="flex flex-col items-center space-y-3">
               <!-- Wife Icon -->
-              <div class="w-20 h-20 bg-pink-100 rounded-full flex items-center justify-center group-hover:bg-pink-200 transition-colors">
-                <svg class="w-12 h-12 text-pink-600" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C13.1 2 14 2.9 14 4S13.1 6 12 6 10 5.1 10 4 10.9 2 12 2M15.9 8.1C15.5 7.7 14.8 7 13.5 7H12.5C11.3 7 10.4 7.8 10.1 8.1C8.9 8.5 8 9.6 8 10.9V11.5L6.5 10C5.9 9.4 4.9 9.4 4.3 10S3.7 11.6 4.3 12.2L7 14.9V19C7 20.1 7.9 21 9 21H11V16H13V21H15C16.1 21 17 20.1 17 19V14.9L19.7 12.2C20.3 11.6 20.3 10.6 19.7 10S18.1 9.4 17.5 10L16 11.5V10.9C16 9.6 15.1 8.5 15.9 8.1Z"/>
+              <div class="w-20 h-20 bg-gradient-to-br from-pink-100 to-pink-200 rounded-full flex items-center justify-center group-hover:from-pink-200 group-hover:to-pink-300 transition-all shadow-inner">
+                <svg class="w-12 h-12 text-pink-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
                 </svg>
               </div>
               <div class="text-center">
@@ -68,19 +68,20 @@
         <div class="text-center mb-6">
           <div class="inline-flex items-center space-x-3">
             <div :class="[
-              'w-16 h-16 rounded-full flex items-center justify-center',
-              selectedRole === 'admin' ? 'bg-blue-100' : 'bg-pink-100'
+              'w-16 h-16 rounded-full flex items-center justify-center shadow-inner',
+              selectedRole === 'admin' ? 'bg-gradient-to-br from-blue-100 to-blue-200' : 'bg-gradient-to-br from-pink-100 to-pink-200'
             ]">
               <svg
                 :class="[
                   'w-10 h-10',
                   selectedRole === 'admin' ? 'text-blue-600' : 'text-pink-600'
                 ]"
-                fill="currentColor"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
                 viewBox="0 0 24 24"
               >
-                <path v-if="selectedRole === 'admin'" d="M12 2C13.1 2 14 2.9 14 4S13.1 6 12 6 10 5.1 10 4 10.9 2 12 2M15.89 8.11C15.5 7.72 14.83 7 13.53 7C13.32 7 13.11 7.04 12.88 7.08C12.27 6.7 11.56 6.5 10.83 6.5C9.84 6.5 8.89 6.81 8.07 7.36C7.85 7.29 7.61 7.24 7.37 7.24C6.64 7.24 5.96 7.65 5.61 8.32C5.24 9 5.31 9.83 5.79 10.41L7 11.62V19C7 20.1 7.9 21 9 21H11V16H13V21H15C16.1 21 17 20.1 17 19V11.62L18.21 10.41C18.69 9.83 18.76 9 18.39 8.32C18.04 7.65 17.36 7.24 16.63 7.24C16.39 7.24 16.15 7.29 15.89 8.11Z"/>
-                <path v-else d="M12 2C13.1 2 14 2.9 14 4S13.1 6 12 6 10 5.1 10 4 10.9 2 12 2M15.9 8.1C15.5 7.7 14.8 7 13.5 7H12.5C11.3 7 10.4 7.8 10.1 8.1C8.9 8.5 8 9.6 8 10.9V11.5L6.5 10C5.9 9.4 4.9 9.4 4.3 10S3.7 11.6 4.3 12.2L7 14.9V19C7 20.1 7.9 21 9 21H11V16H13V21H15C16.1 21 17 20.1 17 19V14.9L19.7 12.2C20.3 11.6 20.3 10.6 19.7 10S18.1 9.4 17.5 10L16 11.5V10.9C16 9.6 15.1 8.5 15.9 8.1Z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
               </svg>
             </div>
             <div class="text-left">

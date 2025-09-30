@@ -5,7 +5,50 @@
       <div class="mb-6">
         <div class="flex justify-between items-center">
           <h1 class="text-2xl font-semibold text-gray-900">财务概览</h1>
-          <div class="text-sm text-gray-500">{{ currentMonth }}</div>
+          <div class="relative">
+            <button @click="showDatePicker = !showDatePicker"
+                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors">
+              {{ currentMonth }}
+              <svg class="inline-block w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <!-- 日期选择下拉菜单 -->
+            <div v-if="showDatePicker"
+                 class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+              <div class="p-2">
+                <button @click="selectPeriod('thisWeek')"
+                        :class="selectedPeriod === 'thisWeek' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50'"
+                        class="w-full text-left px-3 py-2 text-sm rounded transition-colors">
+                  本周
+                </button>
+                <button @click="selectPeriod('current')"
+                        :class="selectedPeriod === 'current' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50'"
+                        class="w-full text-left px-3 py-2 text-sm rounded transition-colors">
+                  本月
+                </button>
+                <button @click="selectPeriod('lastMonth')"
+                        :class="selectedPeriod === 'lastMonth' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50'"
+                        class="w-full text-left px-3 py-2 text-sm rounded transition-colors">
+                  上月
+                </button>
+                <button @click="selectPeriod('thisYear')"
+                        :class="selectedPeriod === 'thisYear' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50'"
+                        class="w-full text-left px-3 py-2 text-sm rounded transition-colors">
+                  今年
+                </button>
+                <div class="border-t border-gray-100 my-2"></div>
+                <div class="px-3 py-2">
+                  <label class="block text-xs text-gray-500 mb-1">选择月份</label>
+                  <input type="month"
+                         v-model="customMonth"
+                         @change="selectCustomMonth"
+                         class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -14,7 +57,7 @@
         <!-- 净收入 -->
         <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
           <div class="mb-2">
-            <span class="text-sm text-gray-500">本月净收入</span>
+            <span class="text-sm text-gray-500">{{ periodLabel }}净收入</span>
           </div>
           <p class="text-2xl font-bold" :class="monthlyNet >= 0 ? 'text-gray-900' : 'text-red-600'">
             {{ monthlyNet >= 0 ? '+' : '-' }}¥{{ Math.abs(monthlyNet).toFixed(0) }}
@@ -80,7 +123,7 @@
 
         <!-- 收支对比 -->
         <div class="bg-white rounded-xl p-6 shadow-sm">
-          <h3 class="text-sm font-medium text-gray-900 mb-4">本月收支</h3>
+          <h3 class="text-sm font-medium text-gray-900 mb-4">{{ periodLabel }}收支</h3>
           <div class="space-y-4">
             <!-- 收入条 -->
             <div>
@@ -306,6 +349,10 @@ const fundPool = ref({
 const showAddModal = ref(false)
 const showQuickStats = ref(false)
 const trendPeriod = ref('7d')
+const showDatePicker = ref(false)
+const selectedPeriod = ref('current')
+const customMonth = ref('')
+const selectedDate = ref(new Date())
 
 const monthlyExpense = ref(0)
 const monthlyIncome = ref(0)
@@ -318,9 +365,24 @@ const categoryData = ref(null)
 
 // 计算属性
 const currentMonth = computed(() => {
-  const date = new Date()
-  return `${date.getFullYear()}年${date.getMonth() + 1}月`
+  if (selectedPeriod.value === 'thisYear') {
+    return `${selectedDate.value.getFullYear()}年`
+  } else if (selectedPeriod.value === 'thisWeek') {
+    const weekStart = getWeekStart(selectedDate.value)
+    const weekEnd = new Date(weekStart)
+    weekEnd.setDate(weekEnd.getDate() + 6)
+    return `${weekStart.getMonth() + 1}月${weekStart.getDate()}日 - ${weekEnd.getMonth() + 1}月${weekEnd.getDate()}日`
+  }
+  return `${selectedDate.value.getFullYear()}年${selectedDate.value.getMonth() + 1}月`
 })
+
+// 获取一周的开始日期（周日）
+function getWeekStart(date) {
+  const d = new Date(date)
+  const day = d.getDay()
+  const diff = d.getDate() - day
+  return new Date(d.setDate(diff))
+}
 
 const monthlyNet = computed(() => {
   return monthlyIncome.value - monthlyExpense.value
@@ -329,6 +391,23 @@ const monthlyNet = computed(() => {
 const savingRate = computed(() => {
   if (monthlyIncome.value === 0) return 0
   return ((monthlyIncome.value - monthlyExpense.value) / monthlyIncome.value) * 100
+})
+
+const periodLabel = computed(() => {
+  switch (selectedPeriod.value) {
+    case 'thisWeek':
+      return '本周'
+    case 'current':
+      return '本月'
+    case 'lastMonth':
+      return '上月'
+    case 'thisYear':
+      return '今年'
+    case 'custom':
+      return '当期'
+    default:
+      return '本月'
+  }
 })
 
 const dailyAverage = computed(() => {
@@ -378,6 +457,36 @@ function formatDate(date) {
 function getPercentage(value, max) {
   if (max === 0) return 0
   return Math.round((value / max) * 100)
+}
+
+// 日期选择函数
+function selectPeriod(period) {
+  selectedPeriod.value = period
+  const now = new Date()
+
+  if (period === 'thisWeek') {
+    selectedDate.value = now
+  } else if (period === 'current') {
+    selectedDate.value = now
+  } else if (period === 'lastMonth') {
+    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    selectedDate.value = lastMonth
+  } else if (period === 'thisYear') {
+    selectedDate.value = new Date(now.getFullYear(), 0, 1)
+  }
+
+  showDatePicker.value = false
+  loadData()
+}
+
+function selectCustomMonth() {
+  if (customMonth.value) {
+    const [year, month] = customMonth.value.split('-')
+    selectedDate.value = new Date(parseInt(year), parseInt(month) - 1, 1)
+    selectedPeriod.value = 'custom'
+    showDatePicker.value = false
+    loadData()
+  }
 }
 
 // 图表配置
@@ -485,8 +594,8 @@ async function loadStatistics() {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   const weekStart = new Date(today)
   weekStart.setDate(weekStart.getDate() - weekStart.getDay())
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
 
+  // 数据已经在 API 层面按时间段过滤，直接统计即可
   let todayExp = 0
   let weekExp = 0
   let monthInc = 0
@@ -507,28 +616,29 @@ async function loadStatistics() {
   transactionStore.transactions.forEach(t => {
     const tDate = new Date(t.date)
 
+    // 今日支出（用于快捷统计）
     if (tDate >= today && t.type === 'expense') {
       todayExp += parseFloat(t.amount)
     }
 
+    // 本周支出（用于快捷统计）
     if (tDate >= weekStart && t.type === 'expense') {
       weekExp += parseFloat(t.amount)
     }
 
-    if (tDate >= monthStart) {
-      if (t.type === 'income') {
-        monthInc += parseFloat(t.amount)
-      } else {
-        monthExp += parseFloat(t.amount)
+    // 选定时期的收支统计
+    if (t.type === 'income') {
+      monthInc += parseFloat(t.amount)
+    } else {
+      monthExp += parseFloat(t.amount)
 
-        if (!categoryTotals[t.category]) {
-          categoryTotals[t.category] = 0
-        }
-        categoryTotals[t.category] += parseFloat(t.amount)
+      if (!categoryTotals[t.category]) {
+        categoryTotals[t.category] = 0
       }
+      categoryTotals[t.category] += parseFloat(t.amount)
     }
 
-    // 趋势数据
+    // 趋势数据（最近7天或30天）
     const daysDiff = Math.floor((now - tDate) / (1000 * 60 * 60 * 24))
     if (daysDiff >= 0 && daysDiff < days && t.type === 'expense') {
       const dateStr = `${tDate.getMonth() + 1}/${tDate.getDate()}`
@@ -542,10 +652,7 @@ async function loadStatistics() {
   weeklyExpense.value = weekExp
   monthlyIncome.value = monthInc
   monthlyExpense.value = monthExp
-  transactionCount.value = transactionStore.transactions.filter(t => {
-    const tDate = new Date(t.date)
-    return tDate >= monthStart
-  }).length
+  transactionCount.value = transactionStore.transactions.length
 
   // 设置趋势图数据
   expenseTrendData.value = {
@@ -592,7 +699,28 @@ function handleAddSuccess() {
 
 async function loadData() {
   await loadFundPool()
-  await transactionStore.fetchTransactions()
+
+  // 根据选择的时间段获取数据
+  let startDate, endDate
+  if (selectedPeriod.value === 'thisYear') {
+    startDate = new Date(selectedDate.value.getFullYear(), 0, 1)
+    endDate = new Date(selectedDate.value.getFullYear(), 11, 31, 23, 59, 59)
+  } else if (selectedPeriod.value === 'thisWeek') {
+    startDate = getWeekStart(selectedDate.value)
+    endDate = new Date(startDate)
+    endDate.setDate(endDate.getDate() + 6)
+    endDate.setHours(23, 59, 59, 999)
+  } else {
+    startDate = new Date(selectedDate.value.getFullYear(), selectedDate.value.getMonth(), 1)
+    endDate = new Date(selectedDate.value.getFullYear(), selectedDate.value.getMonth() + 1, 0, 23, 59, 59)
+  }
+
+  // 使用日期范围参数查询数据库
+  await transactionStore.fetchTransactions({
+    start_date: startDate.toISOString(),
+    end_date: endDate.toISOString()
+  })
+
   await loadStatistics()
 }
 
