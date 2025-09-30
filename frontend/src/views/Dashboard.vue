@@ -5,50 +5,7 @@
       <div class="mb-6">
         <div class="flex justify-between items-center">
           <h1 class="text-2xl font-semibold text-gray-900">财务概览</h1>
-          <div class="relative">
-            <button @click="showDatePicker = !showDatePicker"
-                    class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors">
-              {{ currentMonth }}
-              <svg class="inline-block w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-
-            <!-- 日期选择下拉菜单 -->
-            <div v-if="showDatePicker"
-                 class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-              <div class="p-2">
-                <button @click="selectPeriod('thisWeek')"
-                        :class="selectedPeriod === 'thisWeek' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50'"
-                        class="w-full text-left px-3 py-2 text-sm rounded transition-colors">
-                  本周
-                </button>
-                <button @click="selectPeriod('current')"
-                        :class="selectedPeriod === 'current' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50'"
-                        class="w-full text-left px-3 py-2 text-sm rounded transition-colors">
-                  本月
-                </button>
-                <button @click="selectPeriod('lastMonth')"
-                        :class="selectedPeriod === 'lastMonth' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50'"
-                        class="w-full text-left px-3 py-2 text-sm rounded transition-colors">
-                  上月
-                </button>
-                <button @click="selectPeriod('thisYear')"
-                        :class="selectedPeriod === 'thisYear' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50'"
-                        class="w-full text-left px-3 py-2 text-sm rounded transition-colors">
-                  今年
-                </button>
-                <div class="border-t border-gray-100 my-2"></div>
-                <div class="px-3 py-2">
-                  <label class="block text-xs text-gray-500 mb-1">选择月份</label>
-                  <input type="month"
-                         v-model="customMonth"
-                         @change="selectCustomMonth"
-                         class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-              </div>
-            </div>
-          </div>
+          <DateRangePicker @change="handleDateRangeChange" />
         </div>
       </div>
 
@@ -56,40 +13,89 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <!-- 净收入 -->
         <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-          <div class="mb-2">
-            <span class="text-sm text-gray-500">{{ periodLabel }}净收入</span>
+          <div v-if="isLoading" class="animate-pulse">
+            <div class="h-4 bg-gray-200 rounded w-24 mb-2"></div>
+            <div class="h-8 bg-gray-200 rounded w-32 mb-2"></div>
+            <div class="flex gap-4">
+              <div class="h-3 bg-gray-200 rounded w-20"></div>
+              <div class="h-3 bg-gray-200 rounded w-20"></div>
+            </div>
           </div>
-          <p class="text-2xl font-bold" :class="monthlyNet >= 0 ? 'text-gray-900' : 'text-red-600'">
-            {{ monthlyNet >= 0 ? '+' : '-' }}¥{{ Math.abs(monthlyNet).toFixed(0) }}
-          </p>
-          <div class="flex items-center gap-4 mt-1">
-            <span class="text-xs text-gray-500">
-              收入 ¥{{ monthlyIncome.toFixed(0) }}
-            </span>
-            <span class="text-xs text-gray-500">
-              支出 ¥{{ monthlyExpense.toFixed(0) }}
-            </span>
+          <div v-else>
+            <div class="mb-2">
+              <span class="text-sm text-gray-500">{{ periodLabel }}净收入</span>
+            </div>
+            <p class="text-2xl font-bold" :class="monthlyNet >= 0 ? 'text-gray-900' : 'text-red-600'">
+              {{ monthlyNet >= 0 ? '+' : '-' }}¥{{ Math.abs(monthlyNet).toFixed(0) }}
+            </p>
+            <div class="flex items-center gap-4 mt-1">
+              <span class="text-xs text-gray-500">
+                收入 ¥{{ monthlyIncome.toFixed(0) }}
+              </span>
+              <span class="text-xs text-gray-500">
+                支出 ¥{{ monthlyExpense.toFixed(0) }}
+              </span>
+            </div>
           </div>
         </div>
 
         <!-- 储蓄率 -->
         <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-          <div class="mb-2">
-            <span class="text-sm text-gray-500">储蓄率</span>
-          </div>
-          <div class="flex items-center justify-between">
-            <p class="text-2xl font-bold text-gray-900">{{ savingRate.toFixed(0) }}%</p>
-            <div class="flex-1 max-w-[100px] ml-4">
-              <div class="w-full bg-gray-200 rounded-full h-2">
-                <div class="h-2 rounded-full transition-all duration-500"
-                     :class="savingRate >= 30 ? 'bg-green-500' : savingRate >= 10 ? 'bg-yellow-500' : 'bg-red-500'"
-                     :style="{width: `${Math.min(savingRate, 100)}%`}"></div>
+          <div v-if="isLoading" class="animate-pulse">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <div class="h-4 bg-gray-200 rounded w-16 mb-2"></div>
+                <div class="h-10 bg-gray-200 rounded w-24"></div>
               </div>
+              <div class="w-16 h-16 bg-gray-200 rounded-full"></div>
+            </div>
+            <div class="h-3 bg-gray-200 rounded w-full mb-2"></div>
+            <div class="flex justify-between">
+              <div class="h-3 bg-gray-200 rounded w-16"></div>
+              <div class="h-3 bg-gray-200 rounded w-16"></div>
             </div>
           </div>
-          <p class="text-xs text-gray-500 mt-1">
-            {{ savingRate >= 30 ? '优秀' : savingRate >= 10 ? '良好' : '需要改善' }}
-          </p>
+          <div v-else>
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <span class="text-sm text-gray-500">储蓄率</span>
+                <p class="text-3xl font-bold text-gray-900 mt-1">{{ savingRate.toFixed(0) }}%</p>
+              </div>
+              <!-- 环形图标 -->
+              <div class="relative w-16 h-16">
+                <svg class="transform -rotate-90" width="64" height="64">
+                  <circle cx="32" cy="32" r="28" fill="none" stroke="#E5E7EB" stroke-width="6"/>
+                  <circle cx="32" cy="32" r="28" fill="none"
+                          :stroke="savingRate >= 30 ? '#10B981' : savingRate >= 10 ? '#F59E0B' : '#EF4444'"
+                          stroke-width="6"
+                          :stroke-dasharray="`${2 * Math.PI * 28}`"
+                          :stroke-dashoffset="`${2 * Math.PI * 28 * (1 - Math.min(savingRate, 100) / 100)}`"
+                          class="transition-all duration-500"
+                          stroke-linecap="round"/>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span class="text-xs font-bold" :class="savingRate >= 30 ? 'text-green-600' : savingRate >= 10 ? 'text-yellow-600' : 'text-red-600'">
+                    {{ savingRate.toFixed(0) }}%
+                  </span>
+                </div>
+              </div>
+            </div>
+            <!-- 进度条 -->
+            <div class="w-full bg-gray-200 rounded-full h-3 mb-2">
+              <div class="h-3 rounded-full transition-all duration-500"
+                   :class="savingRate >= 30 ? 'bg-green-500' : savingRate >= 10 ? 'bg-yellow-500' : 'bg-red-500'"
+                   :style="{width: `${Math.min(savingRate, 100)}%`}"></div>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-medium"
+                    :class="savingRate >= 30 ? 'text-green-600' : savingRate >= 10 ? 'text-yellow-600' : 'text-red-600'">
+                {{ savingRate >= 30 ? '✨ 优秀' : savingRate >= 10 ? '👍 良好' : '⚠️ 需要改善' }}
+              </span>
+              <span class="text-xs text-gray-500">
+                目标: 30%
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -106,16 +112,16 @@
           <div class="px-6 py-4">
             <div class="grid grid-cols-3 gap-4 text-center">
               <div>
-                <p class="text-xs text-gray-500">初始资金</p>
-                <p class="text-sm font-semibold text-gray-900">¥{{ (fundPool?.initial_amount || 0).toFixed(0) }}</p>
+                <p class="text-xs text-gray-500 mb-1">初始资金</p>
+                <p class="text-base font-bold text-gray-900">¥{{ (fundPool?.initial_amount || 0).toFixed(0) }}</p>
               </div>
               <div>
-                <p class="text-xs text-gray-500">累计收入</p>
-                <p class="text-sm font-semibold text-green-600">+¥{{ (fundPool?.total_income || 0).toFixed(0) }}</p>
+                <p class="text-xs text-gray-500 mb-1">累计收入</p>
+                <p class="text-base font-bold text-green-600">+¥{{ (fundPool?.total_income || 0).toFixed(0) }}</p>
               </div>
               <div>
-                <p class="text-xs text-gray-500">累计支出</p>
-                <p class="text-sm font-semibold text-red-600">-¥{{ (fundPool?.total_expenses || 0).toFixed(0) }}</p>
+                <p class="text-xs text-gray-500 mb-1">累计支出</p>
+                <p class="text-base font-bold text-red-600">-¥{{ (fundPool?.total_expenses || 0).toFixed(0) }}</p>
               </div>
             </div>
           </div>
@@ -321,6 +327,7 @@ import {
   Filler
 } from 'chart.js'
 import AddTransactionModal from '@/components/AddTransactionModal.vue'
+import DateRangePicker from '@/components/DateRangePicker.vue'
 import axios from '@/utils/axios'
 
 ChartJS.register(
@@ -349,10 +356,8 @@ const fundPool = ref({
 const showAddModal = ref(false)
 const showQuickStats = ref(false)
 const trendPeriod = ref('7d')
-const showDatePicker = ref(false)
-const selectedPeriod = ref('current')
-const customMonth = ref('')
-const selectedDate = ref(new Date())
+const dateRange = ref({ start: null, end: null })
+const isLoading = ref(false)
 
 const monthlyExpense = ref(0)
 const monthlyIncome = ref(0)
@@ -360,30 +365,13 @@ const todayExpense = ref(0)
 const weeklyExpense = ref(0)
 const transactionCount = ref(0)
 
+// 防抖定时器
+let loadDataDebounceTimer = null
+
 const expenseTrendData = ref(null)
 const categoryData = ref(null)
 
 // 计算属性
-const currentMonth = computed(() => {
-  if (selectedPeriod.value === 'thisYear') {
-    return `${selectedDate.value.getFullYear()}年`
-  } else if (selectedPeriod.value === 'thisWeek') {
-    const weekStart = getWeekStart(selectedDate.value)
-    const weekEnd = new Date(weekStart)
-    weekEnd.setDate(weekEnd.getDate() + 6)
-    return `${weekStart.getMonth() + 1}月${weekStart.getDate()}日 - ${weekEnd.getMonth() + 1}月${weekEnd.getDate()}日`
-  }
-  return `${selectedDate.value.getFullYear()}年${selectedDate.value.getMonth() + 1}月`
-})
-
-// 获取一周的开始日期（周日）
-function getWeekStart(date) {
-  const d = new Date(date)
-  const day = d.getDay()
-  const diff = d.getDate() - day
-  return new Date(d.setDate(diff))
-}
-
 const monthlyNet = computed(() => {
   return monthlyIncome.value - monthlyExpense.value
 })
@@ -394,20 +382,27 @@ const savingRate = computed(() => {
 })
 
 const periodLabel = computed(() => {
-  switch (selectedPeriod.value) {
-    case 'thisWeek':
-      return '本周'
-    case 'current':
-      return '本月'
-    case 'lastMonth':
-      return '上月'
-    case 'thisYear':
-      return '今年'
-    case 'custom':
-      return '当期'
-    default:
-      return '本月'
+  if (!dateRange.value.start || !dateRange.value.end) return '当期'
+
+  const start = dateRange.value.start
+  const end = dateRange.value.end
+
+  // 检查是否是整月
+  if (start.getDate() === 1 &&
+      end.getDate() === new Date(end.getFullYear(), end.getMonth() + 1, 0).getDate() &&
+      start.getMonth() === end.getMonth() &&
+      start.getFullYear() === end.getFullYear()) {
+    return '本月'
   }
+
+  // 检查是否是整年
+  if (start.getMonth() === 0 && start.getDate() === 1 &&
+      end.getMonth() === 11 && end.getDate() === 31 &&
+      start.getFullYear() === end.getFullYear()) {
+    return '本年'
+  }
+
+  return '当期'
 })
 
 const dailyAverage = computed(() => {
@@ -459,34 +454,19 @@ function getPercentage(value, max) {
   return Math.round((value / max) * 100)
 }
 
-// 日期选择函数
-function selectPeriod(period) {
-  selectedPeriod.value = period
-  const now = new Date()
+// 日期范围变化处理（带防抖）
+function handleDateRangeChange(range) {
+  dateRange.value = range
 
-  if (period === 'thisWeek') {
-    selectedDate.value = now
-  } else if (period === 'current') {
-    selectedDate.value = now
-  } else if (period === 'lastMonth') {
-    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-    selectedDate.value = lastMonth
-  } else if (period === 'thisYear') {
-    selectedDate.value = new Date(now.getFullYear(), 0, 1)
+  // 清除之前的定时器
+  if (loadDataDebounceTimer) {
+    clearTimeout(loadDataDebounceTimer)
   }
 
-  showDatePicker.value = false
-  loadData()
-}
-
-function selectCustomMonth() {
-  if (customMonth.value) {
-    const [year, month] = customMonth.value.split('-')
-    selectedDate.value = new Date(parseInt(year), parseInt(month) - 1, 1)
-    selectedPeriod.value = 'custom'
-    showDatePicker.value = false
+  // 300ms 防抖
+  loadDataDebounceTimer = setTimeout(() => {
     loadData()
-  }
+  }, 300)
 }
 
 // 图表配置
@@ -698,30 +678,36 @@ function handleAddSuccess() {
 }
 
 async function loadData() {
-  await loadFundPool()
+  isLoading.value = true
 
-  // 根据选择的时间段获取数据
-  let startDate, endDate
-  if (selectedPeriod.value === 'thisYear') {
-    startDate = new Date(selectedDate.value.getFullYear(), 0, 1)
-    endDate = new Date(selectedDate.value.getFullYear(), 11, 31, 23, 59, 59)
-  } else if (selectedPeriod.value === 'thisWeek') {
-    startDate = getWeekStart(selectedDate.value)
-    endDate = new Date(startDate)
-    endDate.setDate(endDate.getDate() + 6)
+  try {
+    await loadFundPool()
+
+    // 如果还没有选择日期范围，使用本月
+    if (!dateRange.value.start || !dateRange.value.end) {
+      const now = new Date()
+      dateRange.value = {
+        start: new Date(now.getFullYear(), now.getMonth(), 1),
+        end: new Date(now.getFullYear(), now.getMonth() + 1, 0)
+      }
+    }
+
+    const startDate = new Date(dateRange.value.start)
+    startDate.setHours(0, 0, 0, 0)
+
+    const endDate = new Date(dateRange.value.end)
     endDate.setHours(23, 59, 59, 999)
-  } else {
-    startDate = new Date(selectedDate.value.getFullYear(), selectedDate.value.getMonth(), 1)
-    endDate = new Date(selectedDate.value.getFullYear(), selectedDate.value.getMonth() + 1, 0, 23, 59, 59)
+
+    // 使用日期范围参数查询数据库
+    await transactionStore.fetchTransactions({
+      start_date: startDate.toISOString(),
+      end_date: endDate.toISOString()
+    })
+
+    await loadStatistics()
+  } finally {
+    isLoading.value = false
   }
-
-  // 使用日期范围参数查询数据库
-  await transactionStore.fetchTransactions({
-    start_date: startDate.toISOString(),
-    end_date: endDate.toISOString()
-  })
-
-  await loadStatistics()
 }
 
 // 监听趋势周期变化
