@@ -304,7 +304,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useTransactionStore } from '@/stores/transaction'
 import { useAuthStore } from '@/stores/auth'
 import { Line, Doughnut } from 'vue-chartjs'
@@ -723,6 +723,11 @@ async function loadData() {
 
   await loadStatistics()
 }
+
+// 监听趋势周期变化
+watch(trendPeriod, () => {
+  loadStatistics()
+})
 
 onMounted(() => {
   loadData()
