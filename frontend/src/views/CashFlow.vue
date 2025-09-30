@@ -42,42 +42,51 @@
     <div class="bg-white rounded-lg shadow p-4 mb-6">
       <!-- 时间和类型筛选 -->
       <div class="flex flex-wrap gap-3 mb-4">
-        <select v-model="timeRange" @change="loadData"
-                class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-          <option value="week">本周</option>
-          <option value="month">本月</option>
-          <option value="quarter">本季度</option>
-          <option value="year">本年</option>
-        </select>
+        <!-- iOS 风格时间范围选择器 -->
+        <div class="inline-flex bg-gray-100 rounded-lg p-1">
+          <button
+            v-for="option in timeRangeOptions"
+            :key="option.value"
+            @click="selectTimeRange(option.value)"
+            :class="{
+              'bg-white text-gray-900 shadow-sm': timeRange === option.value,
+              'text-gray-600 hover:text-gray-900': timeRange !== option.value
+            }"
+            class="px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200"
+          >
+            {{ option.label }}
+          </button>
+        </div>
 
-        <div class="flex gap-2">
+        <!-- iOS 风格类型选择器 -->
+        <div class="inline-flex bg-gray-100 rounded-lg p-1">
           <button
             @click="selectTypeFilter('')"
             :class="{
-              'bg-indigo-600 text-white': filters.type === '',
-              'bg-gray-100 text-gray-700 hover:bg-gray-200': filters.type !== ''
+              'bg-white text-gray-900 shadow-sm': filters.type === '',
+              'text-gray-600 hover:text-gray-900': filters.type !== ''
             }"
-            class="px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
+            class="px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200"
           >
             全部
           </button>
           <button
             @click="selectTypeFilter('income')"
             :class="{
-              'bg-green-600 text-white': filters.type === 'income',
-              'bg-gray-100 text-gray-700 hover:bg-gray-200': filters.type !== 'income'
+              'bg-white text-green-600 shadow-sm': filters.type === 'income',
+              'text-gray-600 hover:text-gray-900': filters.type !== 'income'
             }"
-            class="px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
+            class="px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200"
           >
             收入
           </button>
           <button
             @click="selectTypeFilter('expense')"
             :class="{
-              'bg-red-600 text-white': filters.type === 'expense',
-              'bg-gray-100 text-gray-700 hover:bg-gray-200': filters.type !== 'expense'
+              'bg-white text-red-600 shadow-sm': filters.type === 'expense',
+              'text-gray-600 hover:text-gray-900': filters.type !== 'expense'
             }"
-            class="px-3 py-1.5 rounded-md text-sm font-medium transition-colors"
+            class="px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200"
           >
             支出
           </button>
@@ -118,15 +127,42 @@
         <div v-for="(group, date) in groupedTransactions" :key="date" class="border-b border-gray-200 last:border-b-0">
           <!-- 日期标题 -->
           <div class="bg-gray-50 px-6 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3">
               <span class="font-medium text-gray-900">{{ formatDate(date) }}</span>
               <span class="text-sm text-gray-500">{{ getWeekday(date) }}</span>
-            </div>
-            <div class="flex gap-4 text-sm">
-              <span class="text-green-600">+¥{{ group.income.toFixed(2) }}</span>
-              <span class="text-red-600">-¥{{ group.expense.toFixed(2) }}</span>
-              <span class="font-medium" :class="group.net >= 0 ? 'text-blue-600' : 'text-red-600'">
-                {{ group.net >= 0 ? '+' : '' }}¥{{ group.net.toFixed(2) }}
+              <!-- 趋势图标和净收支金额 -->
+              <span v-if="group.net > 0" class="inline-flex items-center gap-2 text-green-600">
+                <span class="inline-flex items-center text-xs">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                  </svg>
+                  净收入
+                </span>
+                <span class="text-base font-semibold">
+                  +¥{{ Math.abs(group.net).toFixed(2) }}
+                </span>
+              </span>
+              <span v-else-if="group.net < 0" class="inline-flex items-center gap-2 text-red-600">
+                <span class="inline-flex items-center text-xs">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/>
+                  </svg>
+                  净支出
+                </span>
+                <span class="text-base font-semibold">
+                  -¥{{ Math.abs(group.net).toFixed(2) }}
+                </span>
+              </span>
+              <span v-else class="inline-flex items-center gap-2 text-gray-500">
+                <span class="inline-flex items-center text-xs">
+                  <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14"/>
+                  </svg>
+                  持平
+                </span>
+                <span class="text-base font-semibold">
+                  ¥0.00
+                </span>
               </span>
             </div>
           </div>
@@ -135,7 +171,7 @@
           <ul class="divide-y divide-gray-100">
             <li v-for="transaction in group.transactions" :key="transaction.id"
                 class="px-6 py-3 hover:bg-gray-50 flex justify-between items-center">
-              <div class="flex items-center gap-3">
+              <div class="flex items-center gap-3 flex-1">
                 <div class="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center"
                      :class="transaction.type === 'income' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'">
                   <svg v-if="transaction.type === 'income'" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -145,39 +181,38 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
                   </svg>
                 </div>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">{{ getCategoryLabel(transaction.category) }}</p>
-                  <p class="text-xs text-gray-500">{{ transaction.description || '无备注' }}</p>
+                <div class="flex-1 flex justify-between items-center">
+                  <div>
+                    <p class="text-sm font-medium text-gray-900">{{ getCategoryLabel(transaction.category) }}</p>
+                    <p class="text-xs text-gray-500">{{ transaction.description || '无备注' }}</p>
+                  </div>
+                  <span class="text-sm font-medium ml-4"
+                        :class="transaction.type === 'income' ? 'text-green-600' : 'text-red-600'">
+                    {{ transaction.type === 'income' ? '+' : '-' }}¥{{ transaction.amount }}
+                  </span>
                 </div>
               </div>
 
-              <div class="flex items-center gap-4">
-                <span class="text-sm font-semibold"
-                      :class="transaction.type === 'income' ? 'text-green-600' : 'text-red-600'">
-                  {{ transaction.type === 'income' ? '+' : '-' }}¥{{ transaction.amount }}
-                </span>
-
-                <!-- 管理员操作按钮 -->
-                <div v-if="authStore.isAdmin" class="flex items-center gap-1">
-                  <button
-                    @click="editTransaction(transaction)"
-                    class="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
-                    title="编辑"
-                  >
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                    </svg>
-                  </button>
-                  <button
-                    @click="deleteTransaction(transaction.id)"
-                    class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                    title="删除"
-                  >
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                    </svg>
-                  </button>
-                </div>
+              <!-- 管理员操作按钮 -->
+              <div v-if="authStore.isAdmin" class="flex items-center gap-1 ml-4">
+                <button
+                  @click="editTransaction(transaction)"
+                  class="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                  title="编辑"
+                >
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                </button>
+                <button
+                  @click="deleteTransaction(transaction.id)"
+                  class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                  title="删除"
+                >
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                </button>
               </div>
             </li>
           </ul>
@@ -211,14 +246,19 @@ import EditTransactionModal from '@/components/EditTransactionModal.vue'
 const authStore = useAuthStore()
 const transactionStore = useTransactionStore()
 
-const timeRange = ref('month')
+// 从 localStorage 恢复筛选状态，默认为"本周"
+const savedTimeRange = localStorage.getItem('cashflow_timeRange') || 'week'
+const savedType = localStorage.getItem('cashflow_type') || ''
+const savedCategories = JSON.parse(localStorage.getItem('cashflow_categories') || '[]')
+
+const timeRange = ref(savedTimeRange)
 const showAddModal = ref(false)
 const showEditModal = ref(false)
 const editingTransaction = ref(null)
 
 const filters = ref({
-  type: '',
-  categories: [] // 改为数组支持多选
+  type: savedType,
+  categories: savedCategories
 })
 
 const summary = ref({
@@ -226,6 +266,14 @@ const summary = ref({
   totalExpense: 0,
   netAmount: 0
 })
+
+// 时间范围选项
+const timeRangeOptions = [
+  { value: 'week', label: '本周' },
+  { value: 'month', label: '本月' },
+  { value: 'quarter', label: '本季度' },
+  { value: 'year', label: '本年' }
+]
 
 // 分类配置
 const expenseCategories = [
@@ -314,9 +362,19 @@ function getWeekday(dateStr) {
   return days[new Date(dateStr).getDay()]
 }
 
+function selectTimeRange(range) {
+  timeRange.value = range
+  // 保存时间范围到 localStorage
+  localStorage.setItem('cashflow_timeRange', range)
+  loadData()
+}
+
 function selectTypeFilter(type) {
   filters.value.type = type
   filters.value.categories = []
+  // 保存状态到 localStorage
+  localStorage.setItem('cashflow_type', type)
+  localStorage.setItem('cashflow_categories', JSON.stringify([]))
   loadData()
 }
 
@@ -329,6 +387,8 @@ function toggleCategory(category) {
     // 如果未选中，则添加
     filters.value.categories.push(category)
   }
+  // 保存状态到 localStorage
+  localStorage.setItem('cashflow_categories', JSON.stringify(filters.value.categories))
   loadData()
 }
 
