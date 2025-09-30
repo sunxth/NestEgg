@@ -32,12 +32,15 @@
 
           <div>
             <button
-              @click="updateFundPool"
-              :disabled="!initialAmount || initialAmount === currentInitialAmount"
-              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              @click="showResetConfirm = true"
+              :disabled="!initialAmount"
+              class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              更新初始资金
+              重置资金池
             </button>
+            <p class="mt-2 text-sm text-red-600">
+              ⚠️ 警告：重置将删除所有交易记录，且无法恢复！
+            </p>
           </div>
         </div>
       </div>
@@ -125,6 +128,67 @@
         {{ message.text }}
       </p>
     </div>
+
+    <!-- 重置确认对话框 -->
+    <div v-if="showResetConfirm" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex min-h-screen items-center justify-center p-4">
+        <div class="fixed inset-0 bg-gray-900/75 backdrop-blur-sm transition-opacity" @click="showResetConfirm = false"></div>
+
+        <div class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all">
+          <div class="p-6">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900">确认重置资金池</h3>
+                <p class="text-sm text-gray-500 mt-1">此操作不可撤销</p>
+              </div>
+            </div>
+
+            <div class="mb-6">
+              <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                <p class="text-sm font-medium text-red-800 mb-2">⚠️ 警告：以下操作将被执行</p>
+                <ul class="text-sm text-red-700 space-y-1 list-disc list-inside">
+                  <li>删除所有交易记录</li>
+                  <li>重置初始资金为：¥{{ initialAmount?.toFixed(2) || '0.00' }}</li>
+                  <li>资金池余额将重置为初始金额</li>
+                  <li><strong>此操作无法恢复</strong></li>
+                </ul>
+              </div>
+
+              <p class="text-sm text-gray-600">
+                请输入 <strong class="text-red-600">RESET</strong> 以确认此操作：
+              </p>
+              <input
+                v-model="confirmText"
+                type="text"
+                placeholder="输入 RESET 确认"
+                class="mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              />
+            </div>
+
+            <div class="flex gap-3">
+              <button
+                @click="showResetConfirm = false; confirmText = ''"
+                class="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                取消
+              </button>
+              <button
+                @click="resetFundPool"
+                :disabled="confirmText !== 'RESET' || resetting"
+                class="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                {{ resetting ? '重置中...' : '确认重置' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -140,6 +204,9 @@ const transactionStore = useTransactionStore()
 const message = ref(null)
 const initialAmount = ref(null)
 const currentInitialAmount = ref(47830)
+const showResetConfirm = ref(false)
+const confirmText = ref('')
+const resetting = ref(false)
 
 async function exportCSV() {
   const result = await transactionStore.exportCSV()
@@ -185,18 +252,37 @@ async function loadFundPool() {
   }
 }
 
-async function updateFundPool() {
+async function resetFundPool() {
+  if (confirmText.value !== 'RESET') {
+    return
+  }
+
+  resetting.value = true
+
   try {
-    const response = await axios.put('/api/fund-pool/reset', {
+    // 1. 删除所有交易记录
+    const transactions = await axios.get('/api/transactions/')
+    for (const transaction of transactions.data) {
+      await axios.delete(`/api/transactions/${transaction.id}`)
+    }
+
+    // 2. 重置资金池
+    await axios.put('/api/fund-pool/reset', {
       initial_amount: initialAmount.value
     })
-    currentInitialAmount.value = initialAmount.value
-    showMessage('资金池初始金额已更新', 'success')
 
-    // 刷新页面数据
-    window.location.reload()
+    showMessage('资金池已成功重置', 'success')
+    showResetConfirm.value = false
+    confirmText.value = ''
+
+    // 等待一下让用户看到成功消息，然后刷新页面
+    setTimeout(() => {
+      window.location.reload()
+    }, 1500)
   } catch (error) {
-    showMessage('更新失败：' + (error.response?.data?.detail || '未知错误'), 'error')
+    showMessage('重置失败：' + (error.response?.data?.detail || '未知错误'), 'error')
+  } finally {
+    resetting.value = false
   }
 }
 
