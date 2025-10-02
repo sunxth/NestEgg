@@ -5,7 +5,7 @@
 
     <!-- Modal panel -->
     <div class="flex min-h-full items-center justify-center p-4">
-      <div class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all">
+      <div class="relative w-full max-w-md transform overflow-visible rounded-2xl bg-white shadow-2xl transition-all">
         <!-- Header -->
         <div class="border-b border-gray-100 px-6 py-4">
           <h3 class="text-lg font-semibold text-gray-900">编辑交易记录</h3>
@@ -101,12 +101,7 @@
           <!-- Date -->
           <div class="mb-5">
             <label class="mb-2 block text-sm font-medium text-gray-700">日期</label>
-            <input
-              v-model="form.date"
-              type="datetime-local"
-              required
-              class="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 px-4 text-sm font-medium text-gray-900 transition-all duration-200 hover:bg-gray-100 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-            />
+            <DateTimePicker v-model="form.date" />
           </div>
 
           <!-- Description -->
@@ -154,6 +149,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useTransactionStore } from '@/stores/transaction'
+import DateTimePicker from './DateTimePicker.vue'
 import {
   Squares2X2Icon,
   TruckIcon,
