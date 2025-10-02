@@ -2,51 +2,141 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-bold text-gray-900">数据统计</h1>
-      <select v-model="selectedYear" @change="loadData"
-              class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-        <option v-for="year in availableYears" :key="year" :value="year">
-          {{ year }}年
-        </option>
-      </select>
+
+      <!-- 年度选择器 - 现代化设计 -->
+      <div class="relative inline-block">
+        <button @click="showYearPicker = !showYearPicker"
+                class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md hover:border-indigo-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+          <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          <span class="font-semibold text-gray-700">{{ selectedYear }}年</span>
+          <svg class="w-4 h-4 text-gray-500 transition-transform duration-200"
+               :class="{'rotate-180': showYearPicker}"
+               fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+
+        <!-- 下拉菜单 -->
+        <div v-show="showYearPicker"
+             class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden max-h-64 overflow-y-auto">
+          <div class="py-1">
+            <button v-for="year in availableYears" :key="year"
+                    @click="selectYear(year)"
+                    class="w-full px-4 py-2.5 text-left hover:bg-indigo-50 transition-colors duration-150 flex items-center justify-between group"
+                    :class="selectedYear === year ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-gray-700'">
+              <span>{{ year }}年</span>
+              <svg v-if="selectedYear === year" class="w-5 h-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- 年度概览 -->
     <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-      <div class="bg-white p-4 rounded-lg shadow">
-        <dt class="text-sm font-medium text-gray-500">年度总收入</dt>
-        <dd class="mt-1 text-2xl font-semibold text-green-600">
-          ¥{{ yearSummary.totalIncome.toFixed(2) }}
-        </dd>
-        <p class="text-xs text-gray-500 mt-1">月均 ¥{{ (yearSummary.totalIncome / 12).toFixed(2) }}</p>
+      <!-- 年度总收入 -->
+      <div class="relative overflow-hidden rounded-lg shadow-lg bg-gradient-to-br from-green-50 to-emerald-100 p-5">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <dt class="text-sm font-medium text-green-700 mb-1">年度总收入</dt>
+            <dd class="text-2xl font-bold text-green-600 mb-2">
+              ¥{{ yearSummary.totalIncome.toFixed(2) }}
+            </dd>
+            <p class="text-xs text-green-600">月均 ¥{{ (yearSummary.totalIncome / 12).toFixed(2) }}</p>
+          </div>
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-green-500 bg-opacity-20 rounded-full flex items-center justify-center">
+              <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="bg-white p-4 rounded-lg shadow">
-        <dt class="text-sm font-medium text-gray-500">年度总支出</dt>
-        <dd class="mt-1 text-2xl font-semibold text-red-600">
-          ¥{{ yearSummary.totalExpense.toFixed(2) }}
-        </dd>
-        <p class="text-xs text-gray-500 mt-1">月均 ¥{{ (yearSummary.totalExpense / 12).toFixed(2) }}</p>
+
+      <!-- 年度总支出 -->
+      <div class="relative overflow-hidden rounded-lg shadow-lg bg-gradient-to-br from-red-50 to-rose-100 p-5">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <dt class="text-sm font-medium text-red-700 mb-1">年度总支出</dt>
+            <dd class="text-2xl font-bold text-red-600 mb-2">
+              ¥{{ yearSummary.totalExpense.toFixed(2) }}
+            </dd>
+            <p class="text-xs text-red-600">月均 ¥{{ (yearSummary.totalExpense / 12).toFixed(2) }}</p>
+          </div>
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-red-500 bg-opacity-20 rounded-full flex items-center justify-center">
+              <svg class="w-7 h-7 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="bg-white p-4 rounded-lg shadow">
-        <dt class="text-sm font-medium text-gray-500">年度结余</dt>
-        <dd class="mt-1 text-2xl font-semibold"
-            :class="yearSummary.netAmount >= 0 ? 'text-blue-600' : 'text-red-600'">
-          ¥{{ yearSummary.netAmount.toFixed(2) }}
-        </dd>
-        <p class="text-xs text-gray-500 mt-1">储蓄率 {{ yearSummary.savingRate.toFixed(1) }}%</p>
+
+      <!-- 年度结余 -->
+      <div class="relative overflow-hidden rounded-lg shadow-lg bg-gradient-to-br from-blue-50 to-indigo-100 p-5">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <dt class="text-sm font-medium text-blue-700 mb-1">年度结余</dt>
+            <dd class="text-2xl font-bold mb-2"
+                :class="yearSummary.netAmount >= 0 ? 'text-blue-600' : 'text-red-600'">
+              {{ yearSummary.netAmount >= 0 ? '+' : '' }}¥{{ yearSummary.netAmount.toFixed(2) }}
+            </dd>
+            <p class="text-xs text-blue-600">储蓄率 {{ yearSummary.savingRate.toFixed(1) }}%</p>
+          </div>
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-blue-500 bg-opacity-20 rounded-full flex items-center justify-center">
+              <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="bg-white p-4 rounded-lg shadow">
-        <dt class="text-sm font-medium text-gray-500">最大支出月</dt>
-        <dd class="mt-1 text-xl font-semibold text-gray-900">
-          {{ yearSummary.maxExpenseMonth }}月
-        </dd>
-        <p class="text-xs text-gray-500 mt-1">¥{{ yearSummary.maxExpenseAmount.toFixed(2) }}</p>
+
+      <!-- 最大支出月 -->
+      <div class="relative overflow-hidden rounded-lg shadow-lg bg-gradient-to-br from-orange-50 to-amber-100 p-5">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <dt class="text-sm font-medium text-orange-700 mb-1">最大支出月</dt>
+            <dd class="text-2xl font-bold text-orange-600 mb-2">
+              {{ yearSummary.maxExpenseMonth }}月
+            </dd>
+            <p class="text-xs text-orange-600">¥{{ yearSummary.maxExpenseAmount.toFixed(2) }}</p>
+          </div>
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-orange-500 bg-opacity-20 rounded-full flex items-center justify-center">
+              <svg class="w-7 h-7 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="bg-white p-4 rounded-lg shadow">
-        <dt class="text-sm font-medium text-gray-500">最少支出月</dt>
-        <dd class="mt-1 text-xl font-semibold text-gray-900">
-          {{ yearSummary.minExpenseMonth }}月
-        </dd>
-        <p class="text-xs text-gray-500 mt-1">¥{{ yearSummary.minExpenseAmount.toFixed(2) }}</p>
+
+      <!-- 最少支出月 -->
+      <div class="relative overflow-hidden rounded-lg shadow-lg bg-gradient-to-br from-purple-50 to-violet-100 p-5">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <dt class="text-sm font-medium text-purple-700 mb-1">最少支出月</dt>
+            <dd class="text-2xl font-bold text-purple-600 mb-2">
+              {{ yearSummary.minExpenseMonth }}月
+            </dd>
+            <p class="text-xs text-purple-600">¥{{ yearSummary.minExpenseAmount.toFixed(2) }}</p>
+          </div>
+          <div class="flex-shrink-0">
+            <div class="w-12 h-12 bg-purple-500 bg-opacity-20 rounded-full flex items-center justify-center">
+              <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/>
+              </svg>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -112,7 +202,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { Line, Bar, Doughnut } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -144,8 +234,19 @@ ChartJS.register(
 
 const transactionStore = useTransactionStore()
 
-const selectedYear = ref(new Date().getFullYear())
-const availableYears = ref([2024, 2025, 2026])
+// 动态生成年份列表：从 2024 年开始到当前年份后 2 年
+const currentYear = new Date().getFullYear()
+const startYear = 2024 // NestEgg 项目启动年份
+const availableYears = computed(() => {
+  const years = []
+  for (let year = startYear; year <= currentYear + 2; year++) {
+    years.push(year)
+  }
+  return years
+})
+
+const selectedYear = ref(currentYear)
+const showYearPicker = ref(false)
 
 const trendChartData = ref(null)
 const categoryChartData = ref(null)
@@ -261,6 +362,12 @@ const categoryLineOptions = {
 
 function getCategoryLabel(category) {
   return categoryLabels[category] || category
+}
+
+function selectYear(year) {
+  selectedYear.value = year
+  showYearPicker.value = false
+  loadData()
 }
 
 async function loadData() {
@@ -444,7 +551,20 @@ async function loadData() {
   }
 }
 
+// 点击外部关闭下拉菜单
+function handleClickOutside(event) {
+  const yearPicker = event.target.closest('.relative.inline-block')
+  if (!yearPicker) {
+    showYearPicker.value = false
+  }
+}
+
 onMounted(() => {
   loadData()
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
 })
 </script>

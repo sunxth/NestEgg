@@ -15,7 +15,7 @@
     </button>
 
     <!-- 弹出层 -->
-    <div v-if="isOpen" class="absolute right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 overflow-hidden w-[640px]">
+    <div v-if="isOpen" class="absolute right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 overflow-hidden" :class="showCustomPicker ? 'w-[640px]' : 'w-[380px]'">
       <!-- 当前选择提示 -->
       <div class="px-6 py-3 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-gray-200">
         <p class="text-sm text-gray-600">
@@ -26,14 +26,14 @@
 
       <div class="p-6">
         <!-- 快捷选项 -->
-        <div class="mb-6">
+        <div class="mb-4">
           <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">快捷选项</h3>
-          <div class="flex gap-2">
+          <div class="grid grid-cols-2 gap-2">
             <button
               v-for="shortcut in shortcuts"
               :key="shortcut.value"
-              @click="selectShortcut(shortcut.value)"
-              class="flex-1 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 border"
+              @click.stop="selectShortcut(shortcut.value)"
+              class="px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 border"
               :class="activeShortcut === shortcut.value
                 ? 'bg-indigo-600 text-white border-indigo-600 shadow-md'
                 : 'bg-white text-gray-700 border-gray-300 hover:border-indigo-400 hover:bg-indigo-50'"
@@ -44,14 +44,52 @@
         </div>
 
         <!-- 分隔线 -->
-        <div class="border-t border-gray-200 mb-6"></div>
+        <div class="border-t border-gray-200 my-4"></div>
 
-        <!-- 自定义范围 -->
-        <div>
+        <!-- 月份选择器 -->
+        <div v-if="!showCustomPicker" class="mb-4">
+          <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">选择月份</h3>
+
+          <!-- 年份选择 -->
+          <div class="flex items-center justify-between mb-3">
+            <button @click="prevYear" class="p-1.5 hover:bg-gray-100 rounded-lg">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            <span class="text-base font-bold text-gray-900">{{ currentYear }}年</span>
+            <button @click="nextYear" class="p-1.5 hover:bg-gray-100 rounded-lg">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- 月份网格 -->
+          <div class="grid grid-cols-3 gap-2">
+            <button
+              v-for="month in 12"
+              :key="month"
+              @click.stop="selectMonth(month)"
+              :disabled="isMonthDisabled(month)"
+              class="py-3 text-sm font-medium rounded-lg transition-all duration-200 border"
+              :class="isMonthDisabled(month)
+                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                : isMonthSelected(month)
+                  ? 'bg-indigo-600 text-white border-indigo-600 shadow-md'
+                  : 'bg-white text-gray-700 border-gray-200 hover:border-indigo-400 hover:bg-indigo-50'"
+            >
+              {{ month }}月
+            </button>
+          </div>
+        </div>
+
+        <!-- 自定义日期范围 -->
+        <div v-if="showCustomPicker">
           <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">自定义范围</h3>
 
           <!-- 双日历 -->
-          <div class="flex gap-4">
+          <div class="flex gap-4 mb-4">
             <!-- 左侧日历 - 开始日期 -->
             <div class="flex-1">
               <div class="text-center mb-3">
@@ -122,27 +160,36 @@
           </div>
 
           <!-- 验证提示 -->
-          <div v-if="validationError" class="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <div v-if="validationError" class="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg">
             <p class="text-sm text-red-600">{{ validationError }}</p>
           </div>
+        </div>
 
-          <!-- 操作按钮 -->
-          <div class="flex gap-3 mt-6">
+        <!-- 操作按钮 -->
+        <div class="flex gap-3">
+          <button
+            v-if="!showCustomPicker"
+            @click.stop="showCustomPicker = true"
+            class="flex-1 px-4 py-2.5 text-sm font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-all"
+          >
+            自定义范围
+          </button>
+          <template v-else>
             <button
-              @click="clearSelection"
+              @click.stop="cancelCustomPicker"
               class="flex-1 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all"
             >
-              清除
+              取消
             </button>
             <button
-              @click="applyCustomRange"
+              @click.stop="applyCustomRange"
               :disabled="!isCustomRangeValid"
               class="flex-1 px-4 py-2.5 text-sm font-medium text-white rounded-lg transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               :class="isCustomRangeValid ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-400'"
             >
               应用
             </button>
-          </div>
+          </template>
         </div>
       </div>
     </div>
@@ -168,6 +215,8 @@ const tempStart = ref(null)
 const tempEnd = ref(null)
 const activeShortcut = ref('month')
 const validationError = ref('')
+const showCustomPicker = ref(false)
+const currentYear = ref(new Date().getFullYear())
 
 // 日历月份状态
 const startCalendarMonth = ref(new Date())
@@ -176,11 +225,11 @@ const endCalendarMonth = ref(new Date(new Date().setMonth(new Date().getMonth() 
 // 星期标签
 const weekDays = ['日', '一', '二', '三', '四', '五', '六']
 
-// 快捷选项
+// 快捷选项 - 简化为月/季度/年度
 const shortcuts = [
-  { label: '本周', value: 'week' },
   { label: '本月', value: 'month' },
   { label: '上月', value: 'lastMonth' },
+  { label: '本季度', value: 'quarter' },
   { label: '今年', value: 'year' }
 ]
 
@@ -210,12 +259,16 @@ onUnmounted(() => {
 // 切换弹窗
 function togglePicker() {
   isOpen.value = !isOpen.value
+  if (!isOpen.value) {
+    showCustomPicker.value = false
+  }
 }
 
 // 点击外部关闭
 function handleClickOutside(event) {
   if (pickerRef.value && !pickerRef.value.contains(event.target)) {
     isOpen.value = false
+    showCustomPicker.value = false
   }
 }
 
@@ -225,42 +278,52 @@ function handleKeydown(event) {
 
   if (event.key === 'Escape') {
     isOpen.value = false
-  } else if (event.key === 't' || event.key === 'T') {
-    // 'T' for Today
-    const today = new Date()
-    tempStart.value = today
-    tempEnd.value = today
+    showCustomPicker.value = false
   }
 }
 
 // 快捷选项选择
 function selectShortcut(value) {
   const today = new Date()
+  today.setHours(23, 59, 59, 999) // 设置为今天结束时间
   let start, end
 
   switch (value) {
-    case 'week':
-      // 本周（周一到周日）
-      const day = today.getDay()
-      const diff = today.getDate() - day + (day === 0 ? -6 : 1)
-      start = new Date(today.setDate(diff))
-      end = new Date(start)
-      end.setDate(start.getDate() + 6)
-      break
     case 'month':
-      // 本月
+      // 本月（截止到今天）
       start = new Date(today.getFullYear(), today.getMonth(), 1)
       end = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+      // 如果本月还没结束，结束日期设为今天
+      if (end > today) {
+        end = new Date(today)
+        end.setHours(23, 59, 59, 999)
+      }
       break
     case 'lastMonth':
       // 上月
       start = new Date(today.getFullYear(), today.getMonth() - 1, 1)
       end = new Date(today.getFullYear(), today.getMonth(), 0)
       break
+    case 'quarter':
+      // 本季度（截止到今天）
+      const currentQuarter = Math.floor(today.getMonth() / 3)
+      start = new Date(today.getFullYear(), currentQuarter * 3, 1)
+      end = new Date(today.getFullYear(), currentQuarter * 3 + 3, 0)
+      // 如果本季度还没结束，结束日期设为今天
+      if (end > today) {
+        end = new Date(today)
+        end.setHours(23, 59, 59, 999)
+      }
+      break
     case 'year':
-      // 今年
+      // 今年（截止到今天）
       start = new Date(today.getFullYear(), 0, 1)
       end = new Date(today.getFullYear(), 11, 31)
+      // 如果今年还没结束，结束日期设为今天
+      if (end > today) {
+        end = new Date(today)
+        end.setHours(23, 59, 59, 999)
+      }
       break
   }
 
@@ -268,10 +331,68 @@ function selectShortcut(value) {
   tempEnd.value = end
   activeShortcut.value = value
   validationError.value = ''
+  showCustomPicker.value = false
 
   // 快捷选项立即应用并关闭
   applyRange(start, end, value)
   isOpen.value = false
+}
+
+// 年份导航
+function prevYear() {
+  currentYear.value--
+}
+
+function nextYear() {
+  currentYear.value++
+}
+
+// 选择月份
+function selectMonth(month) {
+  const start = new Date(currentYear.value, month - 1, 1)
+  const end = new Date(currentYear.value, month, 0)
+
+  tempStart.value = start
+  tempEnd.value = end
+  activeShortcut.value = null
+
+  applyRange(start, end, null)
+  isOpen.value = false
+}
+
+// 判断月份是否选中
+function isMonthSelected(month) {
+  if (!tempStart.value || !tempEnd.value) return false
+
+  return tempStart.value.getFullYear() === currentYear.value &&
+         tempStart.value.getMonth() === month - 1 &&
+         tempStart.value.getDate() === 1 &&
+         tempEnd.value.getDate() === new Date(currentYear.value, month, 0).getDate()
+}
+
+// 判断月份是否禁用（未来的月份）
+function isMonthDisabled(month) {
+  const today = new Date()
+  const currentYearNow = today.getFullYear()
+  const currentMonthNow = today.getMonth() + 1
+
+  // 如果年份在未来，所有月份都禁用
+  if (currentYear.value > currentYearNow) {
+    return true
+  }
+
+  // 如果是当前年份，禁用未来的月份
+  if (currentYear.value === currentYearNow && month > currentMonthNow) {
+    return true
+  }
+
+  return false
+}
+
+// 取消自定义选择器
+function cancelCustomPicker() {
+  showCustomPicker.value = false
+  validationError.value = ''
 }
 
 // 日历月份导航
@@ -348,14 +469,20 @@ function selectDate(dateObj, type) {
 
 // 判断日期是否可选
 function isDateSelectable(date, type) {
+  const today = new Date()
+  today.setHours(23, 59, 59, 999)
+
+  // 未来的日期不可选
+  if (date > today) {
+    return false
+  }
+
   if (type === 'start' && tempEnd.value) {
-    // 开始日期不能晚于结束日期
     return date <= tempEnd.value
   } else if (type === 'end' && tempStart.value) {
-    // 结束日期不能早于开始日期
     const maxEnd = new Date(tempStart.value)
     maxEnd.setMonth(maxEnd.getMonth() + 12)
-    return date >= tempStart.value && date <= maxEnd
+    return date >= tempStart.value && date <= maxEnd && date <= today
   }
   return true
 }
@@ -428,6 +555,7 @@ function applyCustomRange() {
 
   applyRange(tempStart.value, tempEnd.value, null)
   isOpen.value = false
+  showCustomPicker.value = false
 }
 
 // 应用范围
@@ -445,14 +573,6 @@ function applyRange(start, end, shortcut) {
   emit('change', range)
 }
 
-// 清除选择
-function clearSelection() {
-  tempStart.value = null
-  tempEnd.value = null
-  activeShortcut.value = null
-  validationError.value = ''
-}
-
 // 显示文本
 const displayText = computed(() => {
   if (!tempStart.value || !tempEnd.value) return '选择日期范围'
@@ -460,13 +580,47 @@ const displayText = computed(() => {
   const start = tempStart.value
   const end = tempEnd.value
 
-  // 如果是同一个月
-  if (start.getFullYear() === end.getFullYear() && start.getMonth() === end.getMonth()) {
-    if (start.getDate() === 1 && end.getDate() === new Date(end.getFullYear(), end.getMonth() + 1, 0).getDate()) {
-      return `${start.getFullYear()}年${start.getMonth() + 1}月`
+  // 优先根据 activeShortcut 判断（如果有的话）
+  if (activeShortcut.value) {
+    switch (activeShortcut.value) {
+      case 'month':
+      case 'lastMonth':
+        return `${start.getFullYear()}年${start.getMonth() + 1}月`
+      case 'quarter':
+        const quarter = Math.floor(start.getMonth() / 3) + 1
+        return `${start.getFullYear()}年Q${quarter}`
+      case 'year':
+        return `${start.getFullYear()}年`
     }
   }
 
+  // 如果没有 activeShortcut，根据日期范围智能判断
+  const startQuarter = Math.floor(start.getMonth() / 3)
+  const endQuarter = Math.floor(end.getMonth() / 3)
+  const quarterStartMonth = startQuarter * 3
+
+  // 如果是整年（从1月1日开始）
+  if (start.getMonth() === 0 && start.getDate() === 1 &&
+      start.getFullYear() === end.getFullYear()) {
+    return `${start.getFullYear()}年`
+  }
+
+  // 如果是本季度（从季度第一天开始）
+  if (start.getMonth() === quarterStartMonth &&
+      start.getDate() === 1 &&
+      start.getFullYear() === end.getFullYear() &&
+      startQuarter === endQuarter) {
+    return `${start.getFullYear()}年Q${startQuarter + 1}`
+  }
+
+  // 如果是同一个月（从1号开始）
+  if (start.getFullYear() === end.getFullYear() &&
+      start.getMonth() === end.getMonth() &&
+      start.getDate() === 1) {
+    return `${start.getFullYear()}年${start.getMonth() + 1}月`
+  }
+
+  // 默认显示日期范围
   return `${formatDate(start)} – ${formatDate(end)}`
 })
 
