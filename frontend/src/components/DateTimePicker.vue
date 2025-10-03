@@ -246,26 +246,35 @@ function selectDateAndApply(day) {
   if (!day.selectable) return
 
   const newDate = new Date(day.date)
-  // Set to start of day (00:00)
-  newDate.setHours(0, 0, 0, 0)
+  // Set to current time instead of 00:00 to avoid timezone issues
+  const now = new Date()
+  newDate.setHours(now.getHours(), now.getMinutes(), 0, 0)
   selectedDate.value = newDate
 
   // Emit in datetime-local format (YYYY-MM-DDTHH:mm)
-  const formatted = newDate.toISOString().slice(0, 16)
+  const year = newDate.getFullYear()
+  const month = String(newDate.getMonth() + 1).padStart(2, '0')
+  const day_str = String(newDate.getDate()).padStart(2, '0')
+  const hours = String(newDate.getHours()).padStart(2, '0')
+  const minutes = String(newDate.getMinutes()).padStart(2, '0')
+  const formatted = `${year}-${month}-${day_str}T${hours}:${minutes}`
   emit('update:modelValue', formatted)
   isOpen.value = false
 }
 
 function setToday() {
   const now = new Date()
-  // Set to start of day (00:00)
-  now.setHours(0, 0, 0, 0)
   selectedDate.value = now
   currentYear.value = now.getFullYear()
   currentMonth.value = now.getMonth() + 1
 
-  // Emit in datetime-local format (YYYY-MM-DDTHH:mm)
-  const formatted = now.toISOString().slice(0, 16)
+  // Emit in datetime-local format (YYYY-MM-DDTHH:mm) using local time
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+  const formatted = `${year}-${month}-${day}T${hours}:${minutes}`
   emit('update:modelValue', formatted)
   isOpen.value = false
 }

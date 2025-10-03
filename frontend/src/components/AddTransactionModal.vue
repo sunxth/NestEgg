@@ -216,10 +216,20 @@ async function handleSubmit() {
 
   loading.value = true
 
+  // Format date to local datetime string to avoid timezone issues
+  const localDate = new Date(form.value.date)
+  const year = localDate.getFullYear()
+  const month = String(localDate.getMonth() + 1).padStart(2, '0')
+  const day = String(localDate.getDate()).padStart(2, '0')
+  const hours = String(localDate.getHours()).padStart(2, '0')
+  const minutes = String(localDate.getMinutes()).padStart(2, '0')
+  const seconds = String(localDate.getSeconds()).padStart(2, '0')
+  const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`
+
   const result = await transactionStore.createTransaction({
     ...form.value,
     amount: parseFloat(form.value.amount), // Ensure amount is a number
-    date: new Date(form.value.date).toISOString()
+    date: formattedDate
   })
 
   if (result.success) {
