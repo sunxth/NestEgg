@@ -5,24 +5,24 @@
 
     <!-- Modal panel -->
     <div class="flex min-h-full items-center justify-center p-4">
-      <div class="relative w-full max-w-md transform overflow-visible rounded-2xl bg-white shadow-2xl transition-all">
+      <div class="relative w-full max-w-md transform overflow-visible rounded-2xl bg-white dark:bg-gray-800 shadow-2xl dark:shadow-gray-700/30 transition-all">
         <!-- Header -->
-        <div class="border-b border-gray-100 px-6 py-4">
-          <h3 class="text-lg font-semibold text-gray-900">添加交易记录</h3>
+        <div class="border-b border-gray-100 dark:border-gray-700 px-6 py-4">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">添加交易记录</h3>
         </div>
 
         <!-- Form -->
         <form @submit.prevent="handleSubmit" class="px-6 py-4">
           <!-- Type Selection -->
           <div class="mb-5">
-            <label class="mb-2 block text-sm font-medium text-gray-700">类型</label>
+            <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">类型</label>
             <div class="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 @click="form.type = 'expense'"
                 :class="{
                   'bg-red-500 text-white': form.type === 'expense',
-                  'bg-gray-100 text-gray-700 hover:bg-gray-200': form.type !== 'expense'
+                  'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600': form.type !== 'expense'
                 }"
                 class="rounded-xl py-2.5 px-4 text-sm font-medium transition-all duration-200"
               >
@@ -33,7 +33,7 @@
                 @click="form.type = 'income'"
                 :class="{
                   'bg-green-500 text-white': form.type === 'income',
-                  'bg-gray-100 text-gray-700 hover:bg-gray-200': form.type !== 'income'
+                  'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600': form.type !== 'income'
                 }"
                 class="rounded-xl py-2.5 px-4 text-sm font-medium transition-all duration-200"
               >
@@ -44,9 +44,9 @@
 
           <!-- Amount -->
           <div class="mb-5">
-            <label class="mb-2 block text-sm font-medium text-gray-700">金额</label>
+            <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">金额</label>
             <div class="relative">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">¥</span>
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">¥</span>
               <input
                 v-model.number="form.amount"
                 type="number"
@@ -54,14 +54,14 @@
                 min="0"
                 required
                 placeholder="0.00"
-                class="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-8 pr-4 text-sm font-medium text-gray-900 transition-all duration-200 placeholder:text-gray-400 hover:bg-gray-100 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 py-3 pl-8 pr-4 text-sm font-medium text-gray-900 dark:text-white transition-all duration-200 placeholder:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 focus:border-indigo-500 focus:bg-white dark:focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               />
             </div>
           </div>
 
           <!-- Category -->
           <div class="mb-5">
-            <label class="mb-2 block text-sm font-medium text-gray-700">分类</label>
+            <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">分类</label>
             <div class="grid grid-cols-4 gap-3">
               <template v-if="form.type === 'expense'">
                 <button
@@ -71,7 +71,7 @@
                   @click="form.category = category.value"
                   :class="{
                     'bg-indigo-50 border-indigo-200 text-indigo-700': form.category === category.value,
-                    'bg-white border-gray-200 text-gray-600': form.category !== category.value
+                    'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300': form.category !== category.value
                   }"
                   class="flex flex-col items-center justify-center p-3 border rounded-xl transition-colors duration-150 hover:border-indigo-300 hover:scale-105"
                 >
@@ -87,7 +87,7 @@
                   @click="form.category = category.value"
                   :class="{
                     'bg-green-50 border-green-200 text-green-700': form.category === category.value,
-                    'bg-white border-gray-200 text-gray-600': form.category !== category.value
+                    'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300': form.category !== category.value
                   }"
                   class="flex flex-col items-center justify-center p-3 border rounded-xl transition-colors duration-150 hover:border-green-300 hover:scale-105"
                 >
@@ -100,19 +100,19 @@
 
           <!-- Date -->
           <div class="mb-5">
-            <label class="mb-2 block text-sm font-medium text-gray-700">日期</label>
+            <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">日期</label>
             <DateTimePicker v-model="form.date" />
           </div>
 
           <!-- Description -->
           <div class="mb-6">
-            <label class="mb-2 block text-sm font-medium text-gray-700">备注</label>
+            <label class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">备注</label>
             <textarea
               v-model="form.description"
               rows="2"
               maxlength="200"
               placeholder="添加备注..."
-              class="w-full resize-none rounded-xl border border-gray-200 bg-gray-50 py-3 px-4 text-sm font-medium text-gray-900 transition-all duration-200 placeholder:text-gray-400 hover:bg-gray-100 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              class="w-full resize-none rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 py-3 px-4 text-sm font-medium text-gray-900 dark:text-white transition-all duration-200 placeholder:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 focus:border-indigo-500 focus:bg-white dark:focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             />
           </div>
 
@@ -123,12 +123,12 @@
         </form>
 
         <!-- Footer -->
-        <div class="border-t border-gray-100 bg-gray-50/50 px-6 py-4">
+        <div class="border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/50 px-6 py-4">
           <div class="flex justify-end space-x-3">
             <button
               type="button"
               @click="$emit('close')"
-              class="rounded-xl px-5 py-2.5 text-sm font-medium text-gray-700 transition-all duration-200 hover:bg-gray-100"
+              class="rounded-xl px-5 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-600"
             >
               取消
             </button>

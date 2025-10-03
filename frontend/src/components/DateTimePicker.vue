@@ -4,16 +4,16 @@
     <button
       type="button"
       @click.stop="isOpen = !isOpen"
-      class="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 px-4 text-left text-sm font-medium text-gray-900 transition-all duration-200 hover:bg-gray-100 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 flex items-center justify-between"
+      class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 py-3 px-4 text-left text-sm font-medium text-gray-900 dark:text-white transition-all duration-200 hover:bg-gray-100 dark:hover:bg-gray-600 focus:border-indigo-500 focus:bg-white dark:focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 flex items-center justify-between"
     >
       <div class="flex items-center space-x-2">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-500">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-gray-500 dark:text-gray-400">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
         </svg>
         <span>{{ displayText }}</span>
       </div>
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-           class="w-4 h-4 text-gray-500 transition-transform duration-200"
+           class="w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform duration-200"
            :class="{'rotate-180': isOpen}">
         <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
       </svg>
@@ -30,7 +30,7 @@
     >
       <div
         v-if="isOpen"
-        class="absolute z-50 mt-2 w-full max-h-[500px] overflow-visible rounded-2xl bg-white shadow-xl border border-gray-200"
+        class="absolute z-50 mt-2 w-full max-h-[500px] overflow-visible rounded-2xl bg-white dark:bg-gray-800 shadow-xl dark:shadow-gray-700/30 border border-gray-200 dark:border-gray-700"
       >
         <!-- Date Selection -->
         <div class="p-4 pb-3">
@@ -39,14 +39,14 @@
             <button
               type="button"
               @click.stop="prevMonth"
-              class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+              class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
               </svg>
             </button>
 
-            <span class="text-sm font-semibold text-gray-900">
+            <span class="text-sm font-semibold text-gray-900 dark:text-white">
               {{ currentYear }}年{{ currentMonth }}月
             </span>
 
@@ -55,7 +55,7 @@
               @click.stop="nextMonth"
               :disabled="isNextMonthDisabled"
               :class="{'opacity-30 cursor-not-allowed': isNextMonthDisabled}"
-              class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors disabled:hover:bg-transparent"
+              class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors disabled:hover:bg-transparent"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
@@ -67,7 +67,7 @@
           <div class="grid grid-cols-7 gap-1.5 mb-3">
             <!-- Week headers -->
             <div v-for="day in ['日', '一', '二', '三', '四', '五', '六']" :key="day"
-                 class="text-center text-xs font-medium text-gray-500 py-1.5">
+                 class="text-center text-xs font-medium text-gray-500 dark:text-gray-400 py-1.5">
               {{ day }}
             </div>
 
@@ -80,8 +80,8 @@
               :disabled="!day.selectable"
               :class="{
                 'bg-indigo-600 text-white font-semibold hover:bg-indigo-700': day.isSelected,
-                'text-gray-900 hover:bg-gray-100': day.isCurrentMonth && !day.isSelected && day.selectable,
-                'text-gray-300': !day.isCurrentMonth || !day.selectable,
+                'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600': day.isCurrentMonth && !day.isSelected && day.selectable,
+                'text-gray-300 dark:text-gray-600': !day.isCurrentMonth || !day.selectable,
                 'ring-2 ring-indigo-600 ring-offset-1': day.isToday && !day.isSelected,
                 'cursor-not-allowed': !day.selectable
               }"
@@ -92,11 +92,11 @@
           </div>
 
           <!-- Today button -->
-          <div class="pt-2 border-t border-gray-100">
+          <div class="pt-2 border-t border-gray-100 dark:border-gray-700">
             <button
               type="button"
               @click.stop="setToday"
-              class="w-full rounded-lg px-4 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-50 transition-colors"
+              class="w-full rounded-lg px-4 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-50 dark:hover:bg-gray-600 transition-colors"
             >
               今天
             </button>

@@ -2,7 +2,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-900">交易记录</h1>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">交易记录</h1>
       <button
         v-if="authStore.isAdmin"
         @click="showAddModal = true"
@@ -17,20 +17,20 @@
 
     <!-- 收支汇总卡片 -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-      <div class="bg-white p-4 rounded-lg shadow">
-        <dt class="text-sm font-medium text-gray-500">总收入</dt>
+      <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow dark:shadow-gray-700/30">
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">总收入</dt>
         <dd class="mt-1 text-2xl font-semibold text-green-600">
           +¥{{ summary.totalIncome.toFixed(2) }}
         </dd>
       </div>
-      <div class="bg-white p-4 rounded-lg shadow">
-        <dt class="text-sm font-medium text-gray-500">总支出</dt>
+      <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow dark:shadow-gray-700/30">
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">总支出</dt>
         <dd class="mt-1 text-2xl font-semibold text-red-600">
           -¥{{ summary.totalExpense.toFixed(2) }}
         </dd>
       </div>
-      <div class="bg-white p-4 rounded-lg shadow">
-        <dt class="text-sm font-medium text-gray-500">净收支</dt>
+      <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow dark:shadow-gray-700/30">
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">净收支</dt>
         <dd class="mt-1 text-2xl font-semibold"
             :class="summary.netAmount >= 0 ? 'text-blue-600' : 'text-red-600'">
           {{ summary.netAmount >= 0 ? '+' : '' }}¥{{ summary.netAmount.toFixed(2) }}
@@ -39,18 +39,18 @@
     </div>
 
     <!-- 筛选器 -->
-    <div class="bg-white rounded-lg shadow p-4 mb-6">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-700/30 p-4 mb-6">
       <!-- 时间和类型筛选 -->
       <div class="flex flex-wrap gap-3 mb-4">
         <!-- iOS 风格时间范围选择器 -->
-        <div class="inline-flex bg-gray-100 rounded-lg p-1">
+        <div class="inline-flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
           <button
             v-for="option in timeRangeOptions"
             :key="option.value"
             @click="selectTimeRange(option.value)"
             :class="{
-              'bg-white text-gray-900 shadow-sm': timeRange === option.value,
-              'text-gray-600 hover:text-gray-900': timeRange !== option.value
+              'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm': timeRange === option.value,
+              'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white': timeRange !== option.value
             }"
             class="px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200"
           >
@@ -59,12 +59,12 @@
         </div>
 
         <!-- iOS 风格类型选择器 -->
-        <div class="inline-flex bg-gray-100 rounded-lg p-1">
+        <div class="inline-flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
           <button
             @click="selectTypeFilter('')"
             :class="{
-              'bg-white text-gray-900 shadow-sm': filters.type === '',
-              'text-gray-600 hover:text-gray-900': filters.type !== ''
+              'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm': filters.type === '',
+              'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white': filters.type !== ''
             }"
             class="px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200"
           >
@@ -73,8 +73,8 @@
           <button
             @click="selectTypeFilter('income')"
             :class="{
-              'bg-white text-green-600 shadow-sm': filters.type === 'income',
-              'text-gray-600 hover:text-gray-900': filters.type !== 'income'
+              'bg-white dark:bg-gray-600 text-green-600 shadow-sm': filters.type === 'income',
+              'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white': filters.type !== 'income'
             }"
             class="px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200"
           >
@@ -83,8 +83,8 @@
           <button
             @click="selectTypeFilter('expense')"
             :class="{
-              'bg-white text-red-600 shadow-sm': filters.type === 'expense',
-              'text-gray-600 hover:text-gray-900': filters.type !== 'expense'
+              'bg-white dark:bg-gray-600 text-red-600 shadow-sm': filters.type === 'expense',
+              'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white': filters.type !== 'expense'
             }"
             class="px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200"
           >
@@ -95,7 +95,7 @@
 
       <!-- 分类筛选（多选） -->
       <div v-if="allCategories.length > 0" class="flex items-center gap-2">
-        <span class="text-sm text-gray-500">分类:</span>
+        <span class="text-sm text-gray-500 dark:text-gray-400">分类:</span>
         <div class="flex flex-wrap gap-2">
           <button
             v-for="cat in allCategories"
@@ -103,7 +103,7 @@
             @click="toggleCategory(cat.value)"
             :class="{
               'bg-indigo-600 text-white': filters.categories.includes(cat.value),
-              'bg-gray-50 text-gray-700 hover:bg-gray-100': !filters.categories.includes(cat.value)
+              'bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600': !filters.categories.includes(cat.value)
             }"
             class="px-3 py-1 rounded-md text-sm transition-colors"
           >
@@ -114,22 +114,22 @@
     </div>
 
     <!-- 按日期分组的交易列表 -->
-    <div class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 shadow dark:shadow-gray-700/30 rounded-lg overflow-hidden">
       <div v-if="Object.keys(groupedTransactions).length === 0" class="px-6 py-12 text-center">
-        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
         </svg>
-        <h3 class="mt-2 text-sm font-medium text-gray-900">暂无交易记录</h3>
-        <p class="mt-1 text-sm text-gray-500">开始添加您的第一笔交易</p>
+        <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">暂无交易记录</h3>
+        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">开始添加您的第一笔交易</p>
       </div>
 
       <div v-else>
-        <div v-for="(group, date) in groupedTransactions" :key="date" class="border-b border-gray-200 last:border-b-0">
+        <div v-for="(group, date) in groupedTransactions" :key="date" class="border-b border-gray-200 dark:border-gray-700 last:border-b-0">
           <!-- 日期标题 -->
-          <div class="bg-gray-50 px-6 py-3 flex justify-between items-center">
+          <div class="bg-gray-50 dark:bg-gray-700 px-6 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
-              <span class="font-medium text-gray-900">{{ formatDate(date) }}</span>
-              <span class="text-sm text-gray-500">{{ getWeekday(date) }}</span>
+              <span class="font-medium text-gray-900 dark:text-white">{{ formatDate(date) }}</span>
+              <span class="text-sm text-gray-500 dark:text-gray-400">{{ getWeekday(date) }}</span>
               <!-- 趋势图标和净收支金额 -->
               <span v-if="group.net > 0" class="inline-flex items-center gap-2 text-green-600">
                 <span class="inline-flex items-center text-xs">
@@ -168,9 +168,9 @@
           </div>
 
           <!-- 交易列表 -->
-          <ul class="divide-y divide-gray-100">
+          <ul class="divide-y divide-gray-100 dark:divide-gray-700">
             <li v-for="transaction in group.transactions" :key="transaction.id"
-                class="px-6 py-3 hover:bg-gray-50 flex justify-between items-center">
+                class="px-6 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 flex justify-between items-center">
               <div class="flex items-center gap-3 flex-1">
                 <div class="flex-shrink-0 h-10 w-10 rounded-lg flex items-center justify-center"
                      :class="transaction.type === 'income' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'">
@@ -183,8 +183,8 @@
                 </div>
                 <div class="flex-1 flex justify-between items-center">
                   <div>
-                    <p class="text-sm font-medium text-gray-900">{{ getCategoryLabel(transaction.category) }}</p>
-                    <p class="text-xs text-gray-500">{{ transaction.description || '无备注' }}</p>
+                    <p class="text-sm font-medium text-gray-900 dark:text-white">{{ getCategoryLabel(transaction.category) }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ transaction.description || '无备注' }}</p>
                   </div>
                   <span class="text-sm font-medium ml-4"
                         :class="transaction.type === 'income' ? 'text-green-600' : 'text-red-600'">
@@ -197,7 +197,7 @@
               <div v-if="authStore.isAdmin" class="flex items-center gap-1 ml-4">
                 <button
                   @click="editTransaction(transaction)"
-                  class="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                  class="p-1.5 text-gray-400 dark:text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded transition-colors"
                   title="编辑"
                 >
                   <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -206,7 +206,7 @@
                 </button>
                 <button
                   @click="deleteTransaction(transaction.id)"
-                  class="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                  class="p-1.5 text-gray-400 dark:text-gray-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors"
                   title="删除"
                 >
                   <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

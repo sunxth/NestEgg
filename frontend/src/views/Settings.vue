@@ -1,19 +1,19 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <h1 class="text-2xl font-bold text-gray-900 mb-8">设置</h1>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">设置</h1>
 
-    <div class="bg-white shadow sm:rounded-lg">
+    <div class="bg-white dark:bg-gray-800 shadow dark:shadow-gray-700/30 sm:rounded-lg">
       <!-- 资金池设置（仅管理员） -->
       <div v-if="authStore.isAdmin" class="px-4 py-5 sm:p-6">
-        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">资金池设置</h3>
+        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">资金池设置</h3>
 
         <div class="space-y-4">
           <div>
-            <label for="initial-amount" class="block text-sm font-medium text-gray-700">
+            <label for="initial-amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
               初始资金
             </label>
             <div class="mt-1 flex rounded-md shadow-sm">
-              <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+              <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 sm:text-sm">
                 ¥
               </span>
               <input
@@ -21,11 +21,11 @@
                 v-model.number="initialAmount"
                 type="number"
                 step="0.01"
-                class="flex-1 block w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                class="flex-1 block w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="47830.00"
               />
             </div>
-            <p class="mt-2 text-sm text-gray-500">
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
               设置资金池的初始金额，当前：¥{{ currentInitialAmount.toFixed(2) }}
             </p>
           </div>
@@ -45,18 +45,18 @@
         </div>
       </div>
 
-      <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">数据导出</h3>
+      <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:p-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">数据导出</h3>
 
         <div class="space-y-4">
           <div>
             <button
               @click="exportCSV"
-              class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
             >
               导出 CSV 文件
             </button>
-            <p class="mt-2 text-sm text-gray-500">
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
               将所有交易记录导出为 CSV 格式文件
             </p>
           </div>
@@ -64,51 +64,51 @@
           <div>
             <button
               @click="exportDatabase"
-              class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
             >
               备份数据库
             </button>
-            <p class="mt-2 text-sm text-gray-500">
+            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
               下载完整的 SQLite 数据库文件作为备份
             </p>
           </div>
         </div>
       </div>
 
-      <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">系统信息</h3>
+      <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:p-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">系统信息</h3>
 
         <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
           <div>
-            <dt class="text-sm font-medium text-gray-500">当前用户</dt>
-            <dd class="mt-1 text-sm text-gray-900">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">当前用户</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white">
               {{ authStore.isAdmin ? '管理员' : '普通用户' }}
             </dd>
           </div>
 
           <div>
-            <dt class="text-sm font-medium text-gray-500">权限说明</dt>
-            <dd class="mt-1 text-sm text-gray-900">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">权限说明</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white">
               {{ authStore.isAdmin ? '可以添加、编辑、删除记录' : '仅可查看记录' }}
             </dd>
           </div>
 
           <div>
-            <dt class="text-sm font-medium text-gray-500">版本</dt>
-            <dd class="mt-1 text-sm text-gray-900">v1.0.0</dd>
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">版本</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white">v1.0.0</dd>
           </div>
 
           <div>
-            <dt class="text-sm font-medium text-gray-500">最后登录</dt>
-            <dd class="mt-1 text-sm text-gray-900">{{ new Date().toLocaleString() }}</dd>
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">最后登录</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ new Date().toLocaleString() }}</dd>
           </div>
         </dl>
       </div>
 
-      <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">帮助</h3>
+      <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:p-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">帮助</h3>
 
-        <div class="prose prose-sm text-gray-500">
+        <div class="prose prose-sm text-gray-500 dark:text-gray-400">
           <p>NestEgg 是一个简单的家庭记账系统，帮助您轻松管理家庭财务。</p>
           <ul>
             <li>管理员可以添加、编辑和删除交易记录</li>
@@ -122,9 +122,9 @@
     </div>
 
     <div v-if="message" class="mt-4 rounded-md p-4"
-         :class="message.type === 'success' ? 'bg-green-50' : 'bg-red-50'">
+         :class="message.type === 'success' ? 'bg-green-50 dark:bg-green-900/30' : 'bg-red-50 dark:bg-red-900/30'">
       <p class="text-sm"
-         :class="message.type === 'success' ? 'text-green-800' : 'text-red-800'">
+         :class="message.type === 'success' ? 'text-green-800 dark:text-green-200' : 'text-red-800 dark:text-red-200'">
         {{ message.text }}
       </p>
     </div>
@@ -134,24 +134,24 @@
       <div class="flex min-h-screen items-center justify-center p-4">
         <div class="fixed inset-0 bg-gray-900/75 backdrop-blur-sm transition-opacity" @click="showResetConfirm = false"></div>
 
-        <div class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all">
+        <div class="relative w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 shadow-2xl dark:shadow-gray-700/30 transition-all">
           <div class="p-6">
             <div class="flex items-center gap-4 mb-4">
-              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
               <div>
-                <h3 class="text-lg font-semibold text-gray-900">确认重置资金池</h3>
-                <p class="text-sm text-gray-500 mt-1">此操作不可撤销</p>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">确认重置资金池</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">此操作不可撤销</p>
               </div>
             </div>
 
             <div class="mb-6">
-              <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                <p class="text-sm font-medium text-red-800 mb-2">⚠️ 警告：以下操作将被执行</p>
-                <ul class="text-sm text-red-700 space-y-1 list-disc list-inside">
+              <div class="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
+                <p class="text-sm font-medium text-red-800 dark:text-red-200 mb-2">⚠️ 警告：以下操作将被执行</p>
+                <ul class="text-sm text-red-700 dark:text-red-300 space-y-1 list-disc list-inside">
                   <li>删除所有交易记录</li>
                   <li>重置初始资金为：¥{{ initialAmount?.toFixed(2) || '0.00' }}</li>
                   <li>资金池余额将重置为初始金额</li>
@@ -159,21 +159,21 @@
                 </ul>
               </div>
 
-              <p class="text-sm text-gray-600">
-                请输入 <strong class="text-red-600">RESET</strong> 以确认此操作：
+              <p class="text-sm text-gray-600 dark:text-gray-300">
+                请输入 <strong class="text-red-600 dark:text-red-400">RESET</strong> 以确认此操作：
               </p>
               <input
                 v-model="confirmText"
                 type="text"
                 placeholder="输入 RESET 确认"
-                class="mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                class="mt-2 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
               />
             </div>
 
             <div class="flex gap-3">
               <button
                 @click="showResetConfirm = false; confirmText = ''"
-                class="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                class="flex-1 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
               >
                 取消
               </button>

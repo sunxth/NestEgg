@@ -1,17 +1,17 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-900">数据统计</h1>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">数据统计</h1>
 
       <!-- 年度选择器 - 现代化设计 -->
       <div class="relative inline-block">
         <button @click="showYearPicker = !showYearPicker"
-                class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md hover:border-indigo-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                class="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-700/30 hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900">
           <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
           </svg>
-          <span class="font-semibold text-gray-700">{{ selectedYear }}年</span>
-          <svg class="w-4 h-4 text-gray-500 transition-transform duration-200"
+          <span class="font-semibold text-gray-700 dark:text-gray-300">{{ selectedYear }}年</span>
+          <svg class="w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform duration-200"
                :class="{'rotate-180': showYearPicker}"
                fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -20,14 +20,14 @@
 
         <!-- 下拉菜单 -->
         <div v-show="showYearPicker"
-             class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden max-h-64 overflow-y-auto">
+             class="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl dark:shadow-gray-700/30 z-50 overflow-hidden max-h-64 overflow-y-auto">
           <div class="py-1">
             <button v-for="year in availableYears" :key="year"
                     @click="selectYear(year)"
-                    class="w-full px-4 py-2.5 text-left hover:bg-indigo-50 transition-colors duration-150 flex items-center justify-between group"
-                    :class="selectedYear === year ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-gray-700'">
+                    class="w-full px-4 py-2.5 text-left hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-colors duration-150 flex items-center justify-between group"
+                    :class="selectedYear === year ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 font-semibold' : 'text-gray-700 dark:text-gray-300'">
               <span>{{ year }}年</span>
-              <svg v-if="selectedYear === year" class="w-5 h-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
+              <svg v-if="selectedYear === year" class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
               </svg>
             </button>
@@ -142,32 +142,32 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- 月度趋势图 -->
-      <div class="bg-white p-6 rounded-lg shadow">
-        <h2 class="text-lg font-medium text-gray-900 mb-4">月度收支趋势</h2>
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700/30">
+        <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">月度收支趋势</h2>
         <div class="h-64">
           <Line v-if="trendChartData" :data="trendChartData" :options="lineChartOptions" />
         </div>
       </div>
 
       <!-- 分类支出饼图 -->
-      <div class="bg-white p-6 rounded-lg shadow">
-        <h2 class="text-lg font-medium text-gray-900 mb-4">支出分类占比</h2>
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700/30">
+        <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">支出分类占比</h2>
         <div class="h-64">
           <Doughnut v-if="categoryChartData" :data="categoryChartData" :options="doughnutChartOptions" />
         </div>
       </div>
 
       <!-- 月度对比柱状图 -->
-      <div class="bg-white p-6 rounded-lg shadow">
-        <h2 class="text-lg font-medium text-gray-900 mb-4">月度收支对比</h2>
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700/30">
+        <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">月度收支对比</h2>
         <div class="h-64">
           <Bar v-if="monthlyChartData" :data="monthlyChartData" :options="barChartOptions" />
         </div>
       </div>
 
       <!-- 分类趋势图 -->
-      <div class="bg-white p-6 rounded-lg shadow">
-        <h2 class="text-lg font-medium text-gray-900 mb-4">分类支出趋势</h2>
+      <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700/30">
+        <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">分类支出趋势</h2>
         <div class="h-64">
           <Line v-if="categoryTrendData" :data="categoryTrendData" :options="categoryLineOptions" />
         </div>
@@ -175,25 +175,25 @@
     </div>
 
     <!-- 分类支出排行 -->
-    <div class="mt-6 bg-white p-6 rounded-lg shadow">
-      <h2 class="text-lg font-medium text-gray-900 mb-4">支出分类排行</h2>
+    <div class="mt-6 bg-white dark:bg-gray-800 p-6 rounded-lg shadow dark:shadow-gray-700/30">
+      <h2 class="text-lg font-medium text-gray-900 dark:text-white mb-4">支出分类排行</h2>
       <div class="space-y-3">
         <div v-for="(item, index) in categoryRanking" :key="item.category"
              class="flex items-center justify-between">
           <div class="flex items-center gap-3 flex-1">
-            <span class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm font-medium">
+            <span class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-sm font-medium text-gray-900 dark:text-white">
               {{ index + 1 }}
             </span>
-            <span class="font-medium">{{ getCategoryLabel(item.category) }}</span>
+            <span class="font-medium text-gray-900 dark:text-white">{{ getCategoryLabel(item.category) }}</span>
             <div class="flex-1 mx-4">
-              <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div class="bg-indigo-600 h-2 rounded-full" :style="{width: `${item.percentage}%`}"></div>
               </div>
             </div>
           </div>
           <div class="text-right">
-            <p class="font-semibold">¥{{ item.total.toFixed(2) }}</p>
-            <p class="text-xs text-gray-500">{{ item.percentage.toFixed(1) }}% · {{ item.count }}笔</p>
+            <p class="font-semibold text-gray-900 dark:text-white">¥{{ item.total.toFixed(2) }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">{{ item.percentage.toFixed(1) }}% · {{ item.count }}笔</p>
           </div>
         </div>
       </div>

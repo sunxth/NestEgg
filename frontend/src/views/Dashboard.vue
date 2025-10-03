@@ -1,10 +1,10 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       <!-- 页面标题和日期 -->
       <div class="mb-6">
         <div class="flex justify-between items-center">
-          <h1 class="text-2xl font-semibold text-gray-900">财务概览</h1>
+          <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">财务概览</h1>
           <DateRangePicker @change="handleDateRangeChange" />
         </div>
       </div>
@@ -12,27 +12,27 @@
       <!-- 核心指标区 - 两大指标横向排列 -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <!-- 净收入 -->
-        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30 hover:shadow-md dark:hover:shadow-gray-700/50 transition-shadow">
           <div v-if="isLoading" class="animate-pulse">
-            <div class="h-4 bg-gray-200 rounded w-24 mb-2"></div>
-            <div class="h-8 bg-gray-200 rounded w-32 mb-2"></div>
+            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-2"></div>
+            <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-32 mb-2"></div>
             <div class="flex gap-4">
-              <div class="h-3 bg-gray-200 rounded w-20"></div>
-              <div class="h-3 bg-gray-200 rounded w-20"></div>
+              <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+              <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
             </div>
           </div>
           <div v-else>
             <div class="mb-2">
-              <span class="text-sm text-gray-500">{{ periodLabel }}净收入</span>
+              <span class="text-sm text-gray-500 dark:text-gray-400">{{ periodLabel }}净收入</span>
             </div>
-            <p class="text-2xl font-bold" :class="monthlyNet >= 0 ? 'text-gray-900' : 'text-red-600'">
+            <p class="text-2xl font-bold" :class="monthlyNet >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600'">
               {{ monthlyNet >= 0 ? '+' : '-' }}¥{{ Math.abs(monthlyNet).toFixed(0) }}
             </p>
             <div class="flex items-center gap-4 mt-1">
-              <span class="text-xs text-gray-500">
+              <span class="text-xs text-gray-500 dark:text-gray-400">
                 收入 ¥{{ monthlyIncome.toFixed(0) }}
               </span>
-              <span class="text-xs text-gray-500">
+              <span class="text-xs text-gray-500 dark:text-gray-400">
                 支出 ¥{{ monthlyExpense.toFixed(0) }}
               </span>
             </div>
@@ -40,26 +40,26 @@
         </div>
 
         <!-- 储蓄率 -->
-        <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30 hover:shadow-md dark:hover:shadow-gray-700/50 transition-shadow">
           <div v-if="isLoading" class="animate-pulse">
             <div class="flex items-start justify-between mb-4">
               <div>
-                <div class="h-4 bg-gray-200 rounded w-16 mb-2"></div>
-                <div class="h-10 bg-gray-200 rounded w-24"></div>
+                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16 mb-2"></div>
+                <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
               </div>
-              <div class="w-16 h-16 bg-gray-200 rounded-full"></div>
+              <div class="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
             </div>
-            <div class="h-3 bg-gray-200 rounded w-full mb-2"></div>
+            <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full mb-2"></div>
             <div class="flex justify-between">
-              <div class="h-3 bg-gray-200 rounded w-16"></div>
-              <div class="h-3 bg-gray-200 rounded w-16"></div>
+              <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+              <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
             </div>
           </div>
           <div v-else>
             <div class="flex items-start justify-between mb-4">
               <div>
-                <span class="text-sm text-gray-500">储蓄率</span>
-                <p class="text-3xl font-bold text-gray-900 mt-1">{{ savingRate.toFixed(0) }}%</p>
+                <span class="text-sm text-gray-500 dark:text-gray-400">储蓄率</span>
+                <p class="text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ savingRate.toFixed(0) }}%</p>
               </div>
               <!-- 环形图标 -->
               <div class="relative w-16 h-16">
@@ -81,7 +81,7 @@
               </div>
             </div>
             <!-- 进度条 -->
-            <div class="w-full bg-gray-200 rounded-full h-3 mb-2">
+            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-2">
               <div class="h-3 rounded-full transition-all duration-500"
                    :class="savingRate >= 30 ? 'bg-green-500' : savingRate >= 10 ? 'bg-yellow-500' : 'bg-red-500'"
                    :style="{width: `${Math.min(savingRate, 100)}%`}"></div>
@@ -91,7 +91,7 @@
                     :class="savingRate >= 30 ? 'text-green-600' : savingRate >= 10 ? 'text-yellow-600' : 'text-red-600'">
                 {{ savingRate >= 30 ? '✨ 优秀' : savingRate >= 10 ? '👍 良好' : '⚠️ 需要改善' }}
               </span>
-              <span class="text-xs text-gray-500">
+              <span class="text-xs text-gray-500 dark:text-gray-400">
                 目标: 30%
               </span>
             </div>
@@ -102,7 +102,7 @@
       <!-- 资产和流动性区 -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <!-- 资金池余额 -->
-        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-700/30 overflow-hidden">
           <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 px-6 py-4">
             <h3 class="text-white text-sm font-medium mb-2">资金池余额</h3>
             <p class="text-3xl font-bold text-white">
@@ -112,15 +112,15 @@
           <div class="px-6 py-4">
             <div class="grid grid-cols-3 gap-4 text-center">
               <div>
-                <p class="text-xs text-gray-500 mb-1">初始资金</p>
-                <p class="text-base font-bold text-gray-900">¥{{ (fundPool?.initial_amount || 0).toFixed(0) }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">初始资金</p>
+                <p class="text-base font-bold text-gray-900 dark:text-white">¥{{ (fundPool?.initial_amount || 0).toFixed(0) }}</p>
               </div>
               <div>
-                <p class="text-xs text-gray-500 mb-1">累计收入</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">累计收入</p>
                 <p class="text-base font-bold text-green-600">+¥{{ (fundPool?.total_income || 0).toFixed(0) }}</p>
               </div>
               <div>
-                <p class="text-xs text-gray-500 mb-1">累计支出</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">累计支出</p>
                 <p class="text-base font-bold text-red-600">-¥{{ (fundPool?.total_expenses || 0).toFixed(0) }}</p>
               </div>
             </div>
@@ -128,16 +128,16 @@
         </div>
 
         <!-- 收支对比 -->
-        <div class="bg-white rounded-xl p-6 shadow-sm">
-          <h3 class="text-sm font-medium text-gray-900 mb-4">{{ periodLabel }}收支</h3>
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30">
+          <h3 class="text-sm font-medium text-gray-900 dark:text-white mb-4">{{ periodLabel }}收支</h3>
           <div class="space-y-4">
             <!-- 收入条 -->
             <div>
               <div class="flex justify-between items-center mb-1">
-                <span class="text-sm text-gray-600">收入</span>
-                <span class="text-sm font-semibold text-gray-900">¥{{ monthlyIncome.toFixed(2) }}</span>
+                <span class="text-sm text-gray-600 dark:text-gray-300">收入</span>
+                <span class="text-sm font-semibold text-gray-900 dark:text-white">¥{{ monthlyIncome.toFixed(2) }}</span>
               </div>
-              <div class="w-full bg-gray-100 rounded-full h-2">
+              <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2">
                 <div class="bg-green-500 h-2 rounded-full transition-all duration-500"
                      :style="{width: `${getPercentage(monthlyIncome, Math.max(monthlyIncome, monthlyExpense))}%`}"></div>
               </div>
@@ -145,18 +145,18 @@
             <!-- 支出条 -->
             <div>
               <div class="flex justify-between items-center mb-1">
-                <span class="text-sm text-gray-600">支出</span>
-                <span class="text-sm font-semibold text-gray-900">¥{{ monthlyExpense.toFixed(2) }}</span>
+                <span class="text-sm text-gray-600 dark:text-gray-300">支出</span>
+                <span class="text-sm font-semibold text-gray-900 dark:text-white">¥{{ monthlyExpense.toFixed(2) }}</span>
               </div>
-              <div class="w-full bg-gray-100 rounded-full h-2">
+              <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2">
                 <div class="bg-red-500 h-2 rounded-full transition-all duration-500"
                      :style="{width: `${getPercentage(monthlyExpense, Math.max(monthlyIncome, monthlyExpense))}%`}"></div>
               </div>
             </div>
             <!-- 结余 -->
-            <div class="pt-3 border-t border-gray-100">
+            <div class="pt-3 border-t border-gray-100 dark:border-gray-700">
               <div class="flex justify-between items-center">
-                <span class="text-sm font-medium text-gray-600">结余</span>
+                <span class="text-sm font-medium text-gray-600 dark:text-gray-300">结余</span>
                 <span class="text-lg font-bold" :class="monthlyNet >= 0 ? 'text-indigo-600' : 'text-red-600'">
                   {{ monthlyNet >= 0 ? '+' : '-' }}¥{{ Math.abs(monthlyNet).toFixed(2) }}
                 </span>
@@ -169,17 +169,17 @@
       <!-- 趋势和分析区 -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <!-- 支出趋势 -->
-        <div class="bg-white rounded-xl p-6 shadow-sm">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30">
           <div class="flex justify-between items-center mb-4">
-            <h3 class="text-sm font-medium text-gray-900">支出趋势</h3>
+            <h3 class="text-sm font-medium text-gray-900 dark:text-white">支出趋势</h3>
             <div class="flex gap-1">
               <button @click="trendPeriod = '7d'"
-                      :class="trendPeriod === '7d' ? 'bg-gray-200 text-gray-900' : 'text-gray-500'"
+                      :class="trendPeriod === '7d' ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'"
                       class="px-2 py-1 text-xs rounded transition-colors">
                 7天
               </button>
               <button @click="trendPeriod = '30d'"
-                      :class="trendPeriod === '30d' ? 'bg-gray-200 text-gray-900' : 'text-gray-500'"
+                      :class="trendPeriod === '30d' ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'"
                       class="px-2 py-1 text-xs rounded transition-colors">
                 30天
               </button>
@@ -187,7 +187,7 @@
           </div>
           <div class="h-48">
             <Line v-if="expenseTrendData && hasExpenseData" :data="expenseTrendData" :options="chartOptions" />
-            <div v-else class="h-full flex items-center justify-center text-gray-400">
+            <div v-else class="h-full flex items-center justify-center text-gray-400 dark:text-gray-500">
               <div class="text-center">
                 <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -200,11 +200,11 @@
         </div>
 
         <!-- 支出分类 -->
-        <div class="bg-white rounded-xl p-6 shadow-sm">
-          <h3 class="text-sm font-medium text-gray-900 mb-4">支出分类</h3>
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30">
+          <h3 class="text-sm font-medium text-gray-900 dark:text-white mb-4">支出分类</h3>
           <div class="h-48">
             <Doughnut v-if="categoryData && hasCategoryData" :data="categoryData" :options="pieOptions" />
-            <div v-else class="h-full flex items-center justify-center text-gray-400">
+            <div v-else class="h-full flex items-center justify-center text-gray-400 dark:text-gray-500">
               <div class="text-center">
                 <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -222,7 +222,7 @@
       <!-- 快捷数据区 - 可折叠 -->
       <div class="mb-8">
         <button @click="showQuickStats = !showQuickStats"
-                class="flex items-center gap-2 mb-4 text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                class="flex items-center gap-2 mb-4 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
           <svg class="w-4 h-4 transition-transform" :class="showQuickStats ? 'rotate-90' : ''"
                fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -231,36 +231,36 @@
         </button>
 
         <div v-show="showQuickStats" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="bg-white rounded-xl p-4 shadow-sm">
-            <p class="text-xs text-gray-500 mb-1">今日支出</p>
-            <p class="text-lg font-semibold text-gray-900">¥{{ todayExpense.toFixed(0) }}</p>
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30">
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">今日支出</p>
+            <p class="text-lg font-semibold text-gray-900 dark:text-white">¥{{ todayExpense.toFixed(0) }}</p>
           </div>
-          <div class="bg-white rounded-xl p-4 shadow-sm">
-            <p class="text-xs text-gray-500 mb-1">本周支出</p>
-            <p class="text-lg font-semibold text-gray-900">¥{{ weeklyExpense.toFixed(0) }}</p>
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30">
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">本周支出</p>
+            <p class="text-lg font-semibold text-gray-900 dark:text-white">¥{{ weeklyExpense.toFixed(0) }}</p>
           </div>
-          <div class="bg-white rounded-xl p-4 shadow-sm">
-            <p class="text-xs text-gray-500 mb-1">交易笔数</p>
-            <p class="text-lg font-semibold text-gray-900">{{ transactionCount }}</p>
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30">
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">交易笔数</p>
+            <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ transactionCount }}</p>
           </div>
-          <div class="bg-white rounded-xl p-4 shadow-sm">
-            <p class="text-xs text-gray-500 mb-1">日均支出</p>
-            <p class="text-lg font-semibold text-gray-900">¥{{ dailyAverage.toFixed(0) }}</p>
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30">
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">日均支出</p>
+            <p class="text-lg font-semibold text-gray-900 dark:text-white">¥{{ dailyAverage.toFixed(0) }}</p>
           </div>
         </div>
       </div>
 
       <!-- 最近交易 -->
-      <div class="bg-white rounded-xl shadow-sm">
-        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-          <h3 class="text-sm font-medium text-gray-900">最近交易</h3>
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-700/30">
+        <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+          <h3 class="text-sm font-medium text-gray-900 dark:text-white">最近交易</h3>
           <router-link to="/transactions" class="text-xs text-indigo-600 hover:text-indigo-700">
             查看全部 →
           </router-link>
         </div>
-        <div class="divide-y divide-gray-100">
+        <div class="divide-y divide-gray-100 dark:divide-gray-700">
           <div v-for="transaction in recentTransactions" :key="transaction.id"
-               class="px-6 py-3 hover:bg-gray-50 transition-colors">
+               class="px-6 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-full flex items-center justify-center"
@@ -271,8 +271,8 @@
                   </span>
                 </div>
                 <div>
-                  <p class="text-sm text-gray-900">{{ transaction.description || getCategoryLabel(transaction.category) }}</p>
-                  <p class="text-xs text-gray-500">{{ formatDate(transaction.date) }} · {{ getCategoryLabel(transaction.category) }}</p>
+                  <p class="text-sm text-gray-900 dark:text-white">{{ transaction.description || getCategoryLabel(transaction.category) }}</p>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(transaction.date) }} · {{ getCategoryLabel(transaction.category) }}</p>
                 </div>
               </div>
               <p class="text-sm font-medium"
@@ -281,7 +281,7 @@
               </p>
             </div>
           </div>
-          <div v-if="recentTransactions.length === 0" class="px-6 py-12 text-center text-gray-400">
+          <div v-if="recentTransactions.length === 0" class="px-6 py-12 text-center text-gray-400 dark:text-gray-500">
             <p class="text-sm">暂无交易记录</p>
           </div>
         </div>
@@ -295,7 +295,7 @@
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
       </svg>
-      <span class="absolute right-16 bg-gray-900 text-white px-2 py-1 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+      <span class="absolute right-16 bg-gray-900 dark:bg-gray-700 text-white px-2 py-1 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
         快速记账
       </span>
     </button>
