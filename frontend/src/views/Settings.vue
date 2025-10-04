@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 page-fade-in">
     <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-8">设置</h1>
 
     <div class="bg-white dark:bg-gray-800 shadow dark:shadow-gray-700/30 sm:rounded-lg">
@@ -292,3 +292,21 @@ onMounted(() => {
   }
 })
 </script>
+
+<style scoped>
+/* 页面淡入动画 */
+.page-fade-in {
+  animation: pageFadeIn 0.8s ease-out;
+}
+
+@keyframes pageFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

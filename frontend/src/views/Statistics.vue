@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 page-fade-in">
     <h1 class="text-2xl font-bold text-gray-900 mb-8">统计分析</h1>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -192,3 +192,21 @@ onMounted(() => {
   loadStatistics()
 })
 </script>
+
+<style scoped>
+/* 页面淡入动画 */
+.page-fade-in {
+  animation: pageFadeIn 0.8s ease-out;
+}
+
+@keyframes pageFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

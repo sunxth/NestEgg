@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div v-show="!isLoading" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 page-fade-in">
       <!-- 页面标题和日期 -->
       <div class="mb-6">
         <div class="flex justify-between items-center">
@@ -13,88 +13,62 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <!-- 净收入 -->
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30 hover:shadow-lg dark:hover:shadow-gray-700/50 hover:-translate-y-1 transition-all duration-300">
-          <div v-if="isLoading" class="animate-pulse">
-            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-2"></div>
-            <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-32 mb-2"></div>
-            <div class="flex gap-4">
-              <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
-              <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
-            </div>
+          <div class="mb-2">
+            <span class="text-sm text-gray-500 dark:text-gray-400">{{ periodLabel }}净收入</span>
           </div>
-          <div v-else>
-            <div class="mb-2">
-              <span class="text-sm text-gray-500 dark:text-gray-400">{{ periodLabel }}净收入</span>
-            </div>
-            <p class="text-2xl font-bold" :class="monthlyNet >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600'">
-              {{ monthlyNet >= 0 ? '+' : '-' }}¥{{ Math.abs(monthlyNet).toFixed(0) }}
-            </p>
-            <div class="flex items-center gap-4 mt-1">
-              <span class="text-xs text-gray-500 dark:text-gray-400">
-                收入 ¥{{ monthlyIncome.toFixed(0) }}
-              </span>
-              <span class="text-xs text-gray-500 dark:text-gray-400">
-                支出 ¥{{ monthlyExpense.toFixed(0) }}
-              </span>
-            </div>
+          <p class="text-2xl font-bold" :class="monthlyNet >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600'">
+            {{ monthlyNet >= 0 ? '+' : '-' }}¥{{ Math.abs(monthlyNet).toFixed(0) }}
+          </p>
+          <div class="flex items-center gap-4 mt-1">
+            <span class="text-xs text-gray-500 dark:text-gray-400">
+              收入 ¥{{ monthlyIncome.toFixed(0) }}
+            </span>
+            <span class="text-xs text-gray-500 dark:text-gray-400">
+              支出 ¥{{ monthlyExpense.toFixed(0) }}
+            </span>
           </div>
         </div>
 
         <!-- 储蓄率 -->
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30 hover:shadow-lg dark:hover:shadow-gray-700/50 hover:-translate-y-1 transition-all duration-300">
-          <div v-if="isLoading" class="animate-pulse">
-            <div class="flex items-start justify-between mb-4">
-              <div>
-                <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16 mb-2"></div>
-                <div class="h-10 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
-              </div>
-              <div class="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+          <div class="flex items-start justify-between mb-4">
+            <div>
+              <span class="text-sm text-gray-500 dark:text-gray-400">储蓄率</span>
+              <p class="text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ savingRate.toFixed(0) }}%</p>
             </div>
-            <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full mb-2"></div>
-            <div class="flex justify-between">
-              <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
-              <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
+            <!-- 环形图标 -->
+            <div class="relative w-16 h-16">
+              <svg class="transform -rotate-90" width="64" height="64">
+                <circle cx="32" cy="32" r="28" fill="none" stroke="#E5E7EB" stroke-width="6"/>
+                <circle cx="32" cy="32" r="28" fill="none"
+                        :stroke="savingRate >= 30 ? '#10B981' : savingRate >= 10 ? '#F59E0B' : '#EF4444'"
+                        stroke-width="6"
+                        :stroke-dasharray="`${2 * Math.PI * 28}`"
+                        :stroke-dashoffset="`${2 * Math.PI * 28 * (1 - Math.min(savingRate, 100) / 100)}`"
+                        class="transition-all duration-500"
+                        stroke-linecap="round"/>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-xs font-bold" :class="savingRate >= 30 ? 'text-green-600' : savingRate >= 10 ? 'text-yellow-600' : 'text-red-600'">
+                  {{ savingRate.toFixed(0) }}%
+                </span>
+              </div>
             </div>
           </div>
-          <div v-else>
-            <div class="flex items-start justify-between mb-4">
-              <div>
-                <span class="text-sm text-gray-500 dark:text-gray-400">储蓄率</span>
-                <p class="text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ savingRate.toFixed(0) }}%</p>
-              </div>
-              <!-- 环形图标 -->
-              <div class="relative w-16 h-16">
-                <svg class="transform -rotate-90" width="64" height="64">
-                  <circle cx="32" cy="32" r="28" fill="none" stroke="#E5E7EB" stroke-width="6"/>
-                  <circle cx="32" cy="32" r="28" fill="none"
-                          :stroke="savingRate >= 30 ? '#10B981' : savingRate >= 10 ? '#F59E0B' : '#EF4444'"
-                          stroke-width="6"
-                          :stroke-dasharray="`${2 * Math.PI * 28}`"
-                          :stroke-dashoffset="`${2 * Math.PI * 28 * (1 - Math.min(savingRate, 100) / 100)}`"
-                          class="transition-all duration-500"
-                          stroke-linecap="round"/>
-                </svg>
-                <div class="absolute inset-0 flex items-center justify-center">
-                  <span class="text-xs font-bold" :class="savingRate >= 30 ? 'text-green-600' : savingRate >= 10 ? 'text-yellow-600' : 'text-red-600'">
-                    {{ savingRate.toFixed(0) }}%
-                  </span>
-                </div>
-              </div>
-            </div>
-            <!-- 进度条 -->
-            <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-2">
-              <div class="h-3 rounded-full transition-all duration-500"
-                   :class="savingRate >= 30 ? 'bg-green-500' : savingRate >= 10 ? 'bg-yellow-500' : 'bg-red-500'"
-                   :style="{width: `${Math.min(savingRate, 100)}%`}"></div>
-            </div>
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-medium"
-                    :class="savingRate >= 30 ? 'text-green-600' : savingRate >= 10 ? 'text-yellow-600' : 'text-red-600'">
-                {{ savingRate >= 30 ? '✨ 优秀' : savingRate >= 10 ? '👍 良好' : '⚠️ 需要改善' }}
-              </span>
-              <span class="text-xs text-gray-500 dark:text-gray-400">
-                目标: 30%
-              </span>
-            </div>
+          <!-- 进度条 -->
+          <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-2">
+            <div class="h-3 rounded-full transition-all duration-500"
+                 :class="savingRate >= 30 ? 'bg-green-500' : savingRate >= 10 ? 'bg-yellow-500' : 'bg-red-500'"
+                 :style="{width: `${Math.min(savingRate, 100)}%`}"></div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-medium"
+                  :class="savingRate >= 30 ? 'text-green-600' : savingRate >= 10 ? 'text-yellow-600' : 'text-red-600'">
+              {{ savingRate >= 30 ? '✨ 优秀' : savingRate >= 10 ? '👍 良好' : '⚠️ 需要改善' }}
+            </span>
+            <span class="text-xs text-gray-500 dark:text-gray-400">
+              目标: 30%
+            </span>
           </div>
         </div>
       </div>
@@ -403,7 +377,7 @@ const showAddModal = ref(false)
 const showQuickStats = ref(false)
 const trendPeriod = ref('7d')
 const dateRange = ref({ start: null, end: null })
-const isLoading = ref(false)
+const isLoading = ref(true)  // 初始为 true，避免数据闪烁
 const showLimitDropdown = ref(false)
 const recentLimit = ref(parseInt(localStorage.getItem('dashboard_recent_limit')) || 5)
 const limitDropdownRef = ref(null)
@@ -761,7 +735,10 @@ async function loadData() {
 
     await loadStatistics()
   } finally {
-    isLoading.value = false
+    // 延迟关闭 loading，确保所有 DOM 更新完成，避免闪烁
+    setTimeout(() => {
+      isLoading.value = false
+    }, 150)
   }
 }
 
@@ -787,5 +764,21 @@ onUnmounted(() => {
 
 .modal-enter-from, .modal-leave-to {
   opacity: 0;
+}
+
+/* 整页淡入动画 - 更慢更优雅 */
+.page-fade-in {
+  animation: pageFadeIn 0.8s ease-out;
+}
+
+@keyframes pageFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
