@@ -12,7 +12,7 @@
       <!-- 核心指标区 - 两大指标横向排列 -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
         <!-- 净收入 -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30 hover:shadow-md dark:hover:shadow-gray-700/50 transition-shadow">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30 hover:shadow-lg dark:hover:shadow-gray-700/50 hover:-translate-y-1 transition-all duration-300">
           <div v-if="isLoading" class="animate-pulse">
             <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-2"></div>
             <div class="h-8 bg-gray-200 dark:bg-gray-700 rounded w-32 mb-2"></div>
@@ -40,7 +40,7 @@
         </div>
 
         <!-- 储蓄率 -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30 hover:shadow-md dark:hover:shadow-gray-700/50 transition-shadow">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30 hover:shadow-lg dark:hover:shadow-gray-700/50 hover:-translate-y-1 transition-all duration-300">
           <div v-if="isLoading" class="animate-pulse">
             <div class="flex items-start justify-between mb-4">
               <div>
@@ -102,7 +102,7 @@
       <!-- 资产和流动性区 -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <!-- 资金池余额 -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-700/30 overflow-hidden">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-700/30 hover:shadow-lg dark:hover:shadow-gray-700/50 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
           <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 px-6 py-4">
             <h3 class="text-white text-sm font-medium mb-2">资金池余额</h3>
             <p class="text-3xl font-bold text-white">
@@ -128,7 +128,7 @@
         </div>
 
         <!-- 收支对比 -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30 hover:shadow-lg dark:hover:shadow-gray-700/50 hover:-translate-y-1 transition-all duration-300">
           <h3 class="text-sm font-medium text-gray-900 dark:text-white mb-4">{{ periodLabel }}收支</h3>
           <div class="space-y-4">
             <!-- 收入条 -->
@@ -169,7 +169,7 @@
       <!-- 趋势和分析区 -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <!-- 支出趋势 -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30 hover:shadow-lg dark:hover:shadow-gray-700/50 hover:-translate-y-1 transition-all duration-300">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-sm font-medium text-gray-900 dark:text-white">支出趋势</h3>
             <div class="flex gap-1">
@@ -200,7 +200,7 @@
         </div>
 
         <!-- 支出分类 -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30 hover:shadow-lg dark:hover:shadow-gray-700/50 hover:-translate-y-1 transition-all duration-300">
           <h3 class="text-sm font-medium text-gray-900 dark:text-white mb-4">支出分类</h3>
           <div class="h-48">
             <Doughnut v-if="categoryData && hasCategoryData" :data="categoryData" :options="pieOptions" />
@@ -231,19 +231,19 @@
         </button>
 
         <div v-show="showQuickStats" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30">
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30 hover:shadow-md dark:hover:shadow-gray-700/50 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
             <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">今日支出</p>
             <p class="text-lg font-semibold text-gray-900 dark:text-white">¥{{ todayExpense.toFixed(0) }}</p>
           </div>
-          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30">
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30 hover:shadow-md dark:hover:shadow-gray-700/50 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
             <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">本周支出</p>
             <p class="text-lg font-semibold text-gray-900 dark:text-white">¥{{ weeklyExpense.toFixed(0) }}</p>
           </div>
-          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30">
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30 hover:shadow-md dark:hover:shadow-gray-700/50 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
             <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">交易笔数</p>
             <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ transactionCount }}</p>
           </div>
-          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30">
+          <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30 hover:shadow-md dark:hover:shadow-gray-700/50 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
             <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">日均支出</p>
             <p class="text-lg font-semibold text-gray-900 dark:text-white">¥{{ dailyAverage.toFixed(0) }}</p>
           </div>
@@ -251,10 +251,49 @@
       </div>
 
       <!-- 最近交易 -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-700/30">
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-700/30 hover:shadow-lg dark:hover:shadow-gray-700/50 hover:-translate-y-1 transition-all duration-300">
         <div class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-          <h3 class="text-sm font-medium text-gray-900 dark:text-white">最近交易</h3>
-          <router-link to="/transactions" class="text-xs text-indigo-600 hover:text-indigo-700">
+          <div class="flex items-center gap-3">
+            <h3 class="text-sm font-medium text-gray-900 dark:text-white">最近交易</h3>
+            <!-- 显示条数选择器 -->
+            <div class="relative" ref="limitDropdownRef">
+              <button
+                @click.stop="showLimitDropdown = !showLimitDropdown"
+                class="inline-flex items-center gap-1 px-2 py-1 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
+              >
+                <span>显示: {{ recentLimit }}条</span>
+                <svg class="w-3 h-3 transition-transform" :class="showLimitDropdown ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+
+              <!-- 下拉菜单 -->
+              <Transition
+                enter-active-class="transition duration-100 ease-out"
+                enter-from-class="opacity-0 scale-95"
+                enter-to-class="opacity-100 scale-100"
+                leave-active-class="transition duration-75 ease-in"
+                leave-from-class="opacity-100 scale-100"
+                leave-to-class="opacity-0 scale-95"
+              >
+                <div
+                  v-if="showLimitDropdown"
+                  class="absolute left-0 top-full mt-1 w-24 bg-white dark:bg-gray-700 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 py-1 z-10"
+                >
+                  <button
+                    v-for="option in [5, 10, 15, 20]"
+                    :key="option"
+                    @click.stop="setRecentLimit(option)"
+                    class="w-full px-3 py-1.5 text-xs text-left hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                    :class="recentLimit === option ? 'text-indigo-600 dark:text-indigo-400 font-medium' : 'text-gray-700 dark:text-gray-300'"
+                  >
+                    {{ option }}条
+                  </button>
+                </div>
+              </Transition>
+            </div>
+          </div>
+          <router-link to="/transactions" class="text-xs text-indigo-600 hover:text-indigo-700 transition-colors">
             查看全部 →
           </router-link>
         </div>
@@ -291,7 +330,7 @@
     <!-- 悬浮快速记账按钮 (FAB) -->
     <button v-if="authStore.isAdmin"
             @click="showAddModal = true"
-            class="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 hover:shadow-xl transition-all duration-200 flex items-center justify-center group z-40">
+            class="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-lg hover:bg-indigo-700 hover:shadow-xl hover:scale-110 transition-all duration-200 flex items-center justify-center group z-40">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
       </svg>
@@ -310,7 +349,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue'
 import { useTransactionStore } from '@/stores/transaction'
 import { useAuthStore } from '@/stores/auth'
 import { Line, Doughnut } from 'vue-chartjs'
@@ -329,6 +368,13 @@ import {
 import AddTransactionModal from '@/components/AddTransactionModal.vue'
 import DateRangePicker from '@/components/DateRangePicker.vue'
 import axios from '@/utils/axios'
+
+// 点击外部关闭下拉菜单
+function handleClickOutside(event) {
+  if (limitDropdownRef.value && !limitDropdownRef.value.contains(event.target)) {
+    showLimitDropdown.value = false
+  }
+}
 
 ChartJS.register(
   CategoryScale,
@@ -358,6 +404,9 @@ const showQuickStats = ref(false)
 const trendPeriod = ref('7d')
 const dateRange = ref({ start: null, end: null })
 const isLoading = ref(false)
+const showLimitDropdown = ref(false)
+const recentLimit = ref(parseInt(localStorage.getItem('dashboard_recent_limit')) || 5)
+const limitDropdownRef = ref(null)
 
 const monthlyExpense = ref(0)
 const monthlyIncome = ref(0)
@@ -412,7 +461,7 @@ const dailyAverage = computed(() => {
 })
 
 const recentTransactions = computed(() => {
-  return transactionStore.transactions.slice(0, 5)
+  return transactionStore.transactions.slice(0, recentLimit.value)
 })
 
 const hasExpenseData = computed(() => {
@@ -677,6 +726,12 @@ function handleAddSuccess() {
   loadData()
 }
 
+function setRecentLimit(limit) {
+  recentLimit.value = limit
+  localStorage.setItem('dashboard_recent_limit', limit)
+  showLimitDropdown.value = false
+}
+
 async function loadData() {
   isLoading.value = true
 
@@ -717,6 +772,11 @@ watch(trendPeriod, () => {
 
 onMounted(() => {
   loadData()
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
 })
 </script>
 
