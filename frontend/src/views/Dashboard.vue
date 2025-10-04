@@ -86,16 +86,16 @@
           <div class="px-6 py-4">
             <div class="grid grid-cols-3 gap-4 text-center">
               <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">初始资金</p>
-                <p class="text-base font-semibold text-gray-900 dark:text-white apple-numbers">¥{{ (fundPool?.initial_amount || 0).toFixed(0) }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1.5">初始资金</p>
+                <p class="text-lg font-semibold text-gray-900 dark:text-white apple-numbers">¥{{ (fundPool?.initial_amount || 0).toFixed(0) }}</p>
               </div>
               <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">累计收入</p>
-                <p class="text-base font-semibold text-green-600 apple-numbers">+¥{{ (fundPool?.total_income || 0).toFixed(0) }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1.5">累计收入</p>
+                <p class="text-lg font-semibold text-green-600 apple-numbers">+¥{{ (fundPool?.total_income || 0).toFixed(0) }}</p>
               </div>
               <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">累计支出</p>
-                <p class="text-base font-semibold text-red-600 apple-numbers">-¥{{ (fundPool?.total_expenses || 0).toFixed(0) }}</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mb-1.5">累计支出</p>
+                <p class="text-lg font-semibold text-red-600 apple-numbers">-¥{{ (fundPool?.total_expenses || 0).toFixed(0) }}</p>
               </div>
             </div>
           </div>
