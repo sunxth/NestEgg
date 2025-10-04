@@ -405,26 +405,6 @@ const savingRate = computed(() => {
 })
 
 const periodLabel = computed(() => {
-  if (!dateRange.value.start || !dateRange.value.end) return '当期'
-
-  const start = dateRange.value.start
-  const end = dateRange.value.end
-
-  // 检查是否是整月
-  if (start.getDate() === 1 &&
-      end.getDate() === new Date(end.getFullYear(), end.getMonth() + 1, 0).getDate() &&
-      start.getMonth() === end.getMonth() &&
-      start.getFullYear() === end.getFullYear()) {
-    return '本月'
-  }
-
-  // 检查是否是整年
-  if (start.getMonth() === 0 && start.getDate() === 1 &&
-      end.getMonth() === 11 && end.getDate() === 31 &&
-      start.getFullYear() === end.getFullYear()) {
-    return '本年'
-  }
-
   return '当期'
 })
 

@@ -9,24 +9,26 @@
 
         <div class="space-y-4">
           <div>
-            <label for="initial-amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label for="initial-amount" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               初始资金
             </label>
-            <div class="mt-1 flex rounded-md shadow-sm">
-              <span class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400 sm:text-sm">
-                ¥
-              </span>
+            <div class="relative max-w-xs">
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <span class="text-gray-500 dark:text-gray-400 text-lg font-medium">¥</span>
+              </div>
               <input
                 id="initial-amount"
-                v-model.number="initialAmount"
-                type="number"
-                step="0.01"
-                class="flex-1 block w-full px-3 py-2 rounded-none rounded-r-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                placeholder="47830.00"
+                v-model="formattedAmount"
+                @focus="handleFocus"
+                @blur="handleBlur"
+                type="text"
+                inputmode="decimal"
+                class="block w-full pl-10 pr-4 py-3.5 text-right text-lg font-semibold rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 apple-numbers"
+                :placeholder="formatNumber(47830.91)"
               />
             </div>
-            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              设置资金池的初始金额，当前：¥{{ currentInitialAmount.toFixed(2) }}
+            <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">
+              当前初始金额：<span class="font-semibold text-gray-700 dark:text-gray-300 apple-numbers">¥{{ formatNumber(currentInitialAmount) }}</span>
             </p>
           </div>
 
@@ -193,7 +195,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useTransactionStore } from '@/stores/transaction'
 import axios from '@/utils/axios'
@@ -207,6 +209,49 @@ const currentInitialAmount = ref(47830)
 const showResetConfirm = ref(false)
 const confirmText = ref('')
 const resetting = ref(false)
+const isFocused = ref(false)
+
+// 格式化数字（千位分隔符）
+function formatNumber(num) {
+  if (num === null || num === undefined || num === '') return ''
+  const number = parseFloat(num)
+  if (isNaN(number)) return ''
+  return number.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+// 解析格式化的数字
+function parseFormattedNumber(str) {
+  if (!str) return null
+  // 移除千位分隔符
+  const cleaned = str.replace(/,/g, '')
+  const number = parseFloat(cleaned)
+  return isNaN(number) ? null : number
+}
+
+// 格式化显示的金额
+const formattedAmount = computed({
+  get() {
+    if (isFocused.value) {
+      // 聚焦时显示原始数字（无格式化）
+      return initialAmount.value !== null ? String(initialAmount.value) : ''
+    }
+    // 失焦时显示格式化数字
+    return initialAmount.value !== null ? formatNumber(initialAmount.value) : ''
+  },
+  set(value) {
+    // 移除千位分隔符并解析
+    const parsed = parseFormattedNumber(value)
+    initialAmount.value = parsed
+  }
+})
+
+function handleFocus() {
+  isFocused.value = true
+}
+
+function handleBlur() {
+  isFocused.value = false
+}
 
 async function exportCSV() {
   const result = await transactionStore.exportCSV()
@@ -308,5 +353,13 @@ onMounted(() => {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Apple 风格数字字体 */
+.apple-numbers {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  font-feature-settings: 'tnum' 1;
 }
 </style>
