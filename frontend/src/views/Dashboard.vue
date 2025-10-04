@@ -16,14 +16,14 @@
           <div class="mb-2">
             <span class="text-sm text-gray-500 dark:text-gray-400">{{ periodLabel }}净收入</span>
           </div>
-          <p class="text-2xl font-bold" :class="monthlyNet >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600'">
+          <p class="text-3xl font-semibold leading-tight apple-numbers" :class="monthlyNet >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600'">
             {{ monthlyNet >= 0 ? '+' : '-' }}¥{{ Math.abs(monthlyNet).toFixed(0) }}
           </p>
-          <div class="flex items-center gap-4 mt-1">
-            <span class="text-xs text-gray-500 dark:text-gray-400">
+          <div class="flex items-center gap-4 mt-2">
+            <span class="text-xs text-gray-500 dark:text-gray-400 apple-numbers">
               收入 ¥{{ monthlyIncome.toFixed(0) }}
             </span>
-            <span class="text-xs text-gray-500 dark:text-gray-400">
+            <span class="text-xs text-gray-500 dark:text-gray-400 apple-numbers">
               支出 ¥{{ monthlyExpense.toFixed(0) }}
             </span>
           </div>
@@ -34,7 +34,7 @@
           <div class="flex items-start justify-between mb-4">
             <div>
               <span class="text-sm text-gray-500 dark:text-gray-400">储蓄率</span>
-              <p class="text-3xl font-bold text-gray-900 dark:text-white mt-1">{{ savingRate.toFixed(0) }}%</p>
+              <p class="text-3xl font-semibold text-gray-900 dark:text-white mt-1 leading-tight apple-numbers">{{ savingRate.toFixed(0) }}%</p>
             </div>
             <!-- 环形图标 -->
             <div class="relative w-16 h-16">
@@ -49,7 +49,7 @@
                         stroke-linecap="round"/>
               </svg>
               <div class="absolute inset-0 flex items-center justify-center">
-                <span class="text-xs font-bold" :class="savingRate >= 30 ? 'text-green-600' : savingRate >= 10 ? 'text-yellow-600' : 'text-red-600'">
+                <span class="text-xs font-bold apple-numbers" :class="savingRate >= 30 ? 'text-green-600' : savingRate >= 10 ? 'text-yellow-600' : 'text-red-600'">
                   {{ savingRate.toFixed(0) }}%
                 </span>
               </div>
@@ -79,7 +79,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm dark:shadow-gray-700/30 hover:shadow-lg dark:hover:shadow-gray-700/50 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
           <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 px-6 py-4">
             <h3 class="text-white text-sm font-medium mb-2">资金池余额</h3>
-            <p class="text-3xl font-bold text-white">
+            <p class="text-3xl font-semibold text-white leading-tight apple-numbers">
               ¥{{ fundPool?.current_balance?.toFixed(2) || '0.00' }}
             </p>
           </div>
@@ -87,15 +87,15 @@
             <div class="grid grid-cols-3 gap-4 text-center">
               <div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">初始资金</p>
-                <p class="text-base font-bold text-gray-900 dark:text-white">¥{{ (fundPool?.initial_amount || 0).toFixed(0) }}</p>
+                <p class="text-base font-semibold text-gray-900 dark:text-white apple-numbers">¥{{ (fundPool?.initial_amount || 0).toFixed(0) }}</p>
               </div>
               <div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">累计收入</p>
-                <p class="text-base font-bold text-green-600">+¥{{ (fundPool?.total_income || 0).toFixed(0) }}</p>
+                <p class="text-base font-semibold text-green-600 apple-numbers">+¥{{ (fundPool?.total_income || 0).toFixed(0) }}</p>
               </div>
               <div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">累计支出</p>
-                <p class="text-base font-bold text-red-600">-¥{{ (fundPool?.total_expenses || 0).toFixed(0) }}</p>
+                <p class="text-base font-semibold text-red-600 apple-numbers">-¥{{ (fundPool?.total_expenses || 0).toFixed(0) }}</p>
               </div>
             </div>
           </div>
@@ -109,7 +109,7 @@
             <div>
               <div class="flex justify-between items-center mb-1">
                 <span class="text-sm text-gray-600 dark:text-gray-300">收入</span>
-                <span class="text-sm font-semibold text-gray-900 dark:text-white">¥{{ monthlyIncome.toFixed(2) }}</span>
+                <span class="text-sm font-semibold text-gray-900 dark:text-white apple-numbers">¥{{ monthlyIncome.toFixed(2) }}</span>
               </div>
               <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2">
                 <div class="bg-green-500 h-2 rounded-full transition-all duration-500"
@@ -120,7 +120,7 @@
             <div>
               <div class="flex justify-between items-center mb-1">
                 <span class="text-sm text-gray-600 dark:text-gray-300">支出</span>
-                <span class="text-sm font-semibold text-gray-900 dark:text-white">¥{{ monthlyExpense.toFixed(2) }}</span>
+                <span class="text-sm font-semibold text-gray-900 dark:text-white apple-numbers">¥{{ monthlyExpense.toFixed(2) }}</span>
               </div>
               <div class="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2">
                 <div class="bg-red-500 h-2 rounded-full transition-all duration-500"
@@ -131,7 +131,7 @@
             <div class="pt-3 border-t border-gray-100 dark:border-gray-700">
               <div class="flex justify-between items-center">
                 <span class="text-sm font-medium text-gray-600 dark:text-gray-300">结余</span>
-                <span class="text-lg font-bold" :class="monthlyNet >= 0 ? 'text-indigo-600' : 'text-red-600'">
+                <span class="text-lg font-semibold apple-numbers" :class="monthlyNet >= 0 ? 'text-indigo-600' : 'text-red-600'">
                   {{ monthlyNet >= 0 ? '+' : '-' }}¥{{ Math.abs(monthlyNet).toFixed(2) }}
                 </span>
               </div>
@@ -206,20 +206,20 @@
 
         <div v-show="showQuickStats" class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30 hover:shadow-md dark:hover:shadow-gray-700/50 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
-            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">今日支出</p>
-            <p class="text-lg font-semibold text-gray-900 dark:text-white">¥{{ todayExpense.toFixed(0) }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1.5">今日支出</p>
+            <p class="text-xl font-semibold text-gray-900 dark:text-white leading-tight apple-numbers">¥{{ todayExpense.toFixed(0) }}</p>
           </div>
           <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30 hover:shadow-md dark:hover:shadow-gray-700/50 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
-            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">本周支出</p>
-            <p class="text-lg font-semibold text-gray-900 dark:text-white">¥{{ weeklyExpense.toFixed(0) }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1.5">本周支出</p>
+            <p class="text-xl font-semibold text-gray-900 dark:text-white leading-tight apple-numbers">¥{{ weeklyExpense.toFixed(0) }}</p>
           </div>
           <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30 hover:shadow-md dark:hover:shadow-gray-700/50 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
-            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">交易笔数</p>
-            <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ transactionCount }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1.5">交易笔数</p>
+            <p class="text-xl font-semibold text-gray-900 dark:text-white leading-tight apple-numbers">{{ transactionCount }}</p>
           </div>
           <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30 hover:shadow-md dark:hover:shadow-gray-700/50 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
-            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">日均支出</p>
-            <p class="text-lg font-semibold text-gray-900 dark:text-white">¥{{ dailyAverage.toFixed(0) }}</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-1.5">日均支出</p>
+            <p class="text-xl font-semibold text-gray-900 dark:text-white leading-tight apple-numbers">¥{{ dailyAverage.toFixed(0) }}</p>
           </div>
         </div>
       </div>
@@ -288,7 +288,7 @@
                   <p class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(transaction.date) }} · {{ getCategoryLabel(transaction.category) }}</p>
                 </div>
               </div>
-              <p class="text-sm font-medium"
+              <p class="text-sm font-medium apple-numbers"
                  :class="transaction.type === 'income' ? 'text-green-600' : 'text-red-600'">
                 {{ transaction.type === 'income' ? '+' : '-' }}¥{{ parseFloat(transaction.amount).toFixed(2) }}
               </p>
@@ -780,5 +780,13 @@ onUnmounted(() => {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Apple 风格数字字体 */
+:deep(.apple-numbers) {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  font-feature-settings: 'tnum' 1;
 }
 </style>
