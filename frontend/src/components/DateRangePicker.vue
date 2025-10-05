@@ -238,13 +238,20 @@ onMounted(() => {
   const saved = localStorage.getItem('dateRangePicker')
   if (saved) {
     const data = JSON.parse(saved)
-    tempStart.value = data.start ? new Date(data.start) : null
-    tempEnd.value = data.end ? new Date(data.end) : null
     activeShortcut.value = data.shortcut || 'month'
 
-    // 立即通知父组件恢复的日期范围
-    if (tempStart.value && tempEnd.value) {
-      emit('change', { start: tempStart.value, end: tempEnd.value })
+    // 如果是快捷选项（本月/上月/本季度/今年），重新计算日期以获取最新数据
+    // 如果是自定义范围，则使用缓存的日期
+    if (activeShortcut.value !== 'custom') {
+      selectShortcut(activeShortcut.value)
+    } else {
+      tempStart.value = data.start ? new Date(data.start) : null
+      tempEnd.value = data.end ? new Date(data.end) : null
+
+      // 立即通知父组件恢复的日期范围
+      if (tempStart.value && tempEnd.value) {
+        emit('change', { start: tempStart.value, end: tempEnd.value })
+      }
     }
   } else {
     // 默认本月

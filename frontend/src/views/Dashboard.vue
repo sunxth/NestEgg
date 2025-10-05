@@ -728,7 +728,8 @@ watch(trendPeriod, () => {
 })
 
 onMounted(() => {
-  loadData()
+  // 不需要在这里调用 loadData()，DateRangePicker 初始化时会自动触发 change 事件
+  // 这样避免重复加载数据
   document.addEventListener('click', handleClickOutside)
 })
 
