@@ -75,16 +75,22 @@ npm run preview
 ### Backend Structure
 ```
 backend/app/
-├── main.py           # FastAPI app, CORS, router registration
+├── main.py           # FastAPI app, CORS, router registration, scheduler lifecycle
 ├── models.py         # SQLModel schemas: Transaction, FundPool, User roles/enums
 ├── database.py       # Database initialization and session management
 ├── auth.py           # JWT authentication, password verification, role checks
 ├── config.py         # Settings management (loads from .env)
-└── routers/
-    ├── auth.py       # POST /api/auth/login
-    ├── transactions.py  # CRUD + stats endpoints
-    ├── fund_pool.py  # GET /api/fund-pool/
-    └── export.py     # CSV export, database backup
+├── routers/
+│   ├── auth.py       # POST /api/auth/login
+│   ├── transactions.py  # CRUD + stats endpoints
+│   ├── fund_pool.py  # GET /api/fund-pool/
+│   ├── reports.py    # Weekly/monthly reports and push testing
+│   └── export.py     # CSV export, database backup
+└── services/
+    ├── notification.py  # Transaction notification service (email)
+    ├── email_service.py # SMTP email sending
+    ├── report.py     # Report generation and Server酱 push
+    └── scheduler.py  # APScheduler for weekly/monthly reports
 ```
 
 **Key Models:**
@@ -109,7 +115,8 @@ frontend/src/
 ├── router/index.js   # Route definitions, auth guards
 ├── stores/
 │   ├── auth.js       # Authentication state (Pinia)
-│   └── transaction.js # Transaction data management (Pinia)
+│   ├── transaction.js # Transaction data management (Pinia)
+│   └── theme.js      # Dark mode theme management (Pinia)
 ├── views/            # Main pages
 │   ├── Dashboard.vue    # Fund pool overview, date range picker, recent transactions
 │   ├── CashFlow.vue     # Unified transaction list (merged 记账 and 收支 pages)
@@ -122,6 +129,7 @@ frontend/src/
 │   ├── AddTransactionModal.vue    # Create transaction dialog
 │   ├── EditTransactionModal.vue   # Edit transaction dialog
 │   ├── DateRangePicker.vue        # Date range selection component
+│   ├── DateTimePicker.vue         # Date/time picker for transactions
 │   └── Logo.vue                   # App logo component
 └── utils/
     └── axios.js      # Axios instance with auth interceptors
@@ -130,6 +138,7 @@ frontend/src/
 **State Management (Pinia):**
 - `auth` store: Manages login state, user role, JWT token persistence
 - `transaction` store: Caches transactions, provides filtering/sorting
+- `theme` store: Dark mode toggle and persistence
 
 **Routing:**
 - All routes except `/login` require authentication (via `router.beforeEach`)
@@ -162,6 +171,14 @@ frontend/src/
 - `GET /api/export/csv` - Export transactions as CSV
 - `GET /api/export/database` - Backup SQLite database
 
+**Reports (admin only):**
+- `GET /api/reports/weekly` - Weekly report data
+- `GET /api/reports/monthly` - Monthly report data
+- `GET /api/reports/preview/weekly` - Preview weekly report markdown
+- `GET /api/reports/preview/monthly` - Preview monthly report markdown
+- `POST /api/reports/test-push` - Test Server酱 push notification
+  - Body: `{"send_keys": ["SCT123xxx"], "report_type": "weekly|monthly"}`
+
 **Health:**
 - `GET /api/health` - Service health check
 
@@ -176,11 +193,29 @@ frontend/src/
 
 **Backend (.env):**
 ```
+# Core settings
 DATABASE_URL=sqlite:///./nestegg.db
 SECRET_KEY=<generated>
 ADMIN_PASSWORD=admin123
 USER_PASSWORD=user123
 ACCESS_TOKEN_EXPIRE_MINUTES=10080
+
+# Server酱 WeChat push (see docs/wechat-push.md)
+SERVERCHAN_KEYS=                     # Comma-separated SendKeys
+ENABLE_WEEKLY_REPORT=false           # Weekly report (Mondays)
+ENABLE_MONTHLY_REPORT=false          # Monthly report (1st of month)
+WEEKLY_REPORT_TIME=09:00             # Time in HH:MM format
+MONTHLY_REPORT_TIME=09:00
+
+# Email notifications (SMTP)
+SMTP_SERVER=                         # e.g., smtp.qq.com
+SMTP_PORT=465                        # TLS/SSL port
+SMTP_USER=                           # Sender email
+SMTP_PASSWORD=                       # SMTP auth token (NOT password)
+SMTP_USE_TLS=true
+EMAIL_RECIPIENTS=                    # Comma-separated emails
+ENABLE_EMAIL_REPORT=false            # Weekly/monthly reports via email
+ENABLE_TRANSACTION_NOTIFICATION=false # Email on transaction create
 ```
 
 **Frontend:**
@@ -206,6 +241,14 @@ ACCESS_TOKEN_EXPIRE_MINUTES=10080
 - Improved form input steps (amount input step: 1 instead of 0.01)
 - Analytics page: gradient background cards with icons for better visual hierarchy
 - Analytics page: custom year picker with dropdown (auto-expands from 2024 to current year + 2)
+- Dark mode support with theme toggle in navigation bar
+
+**Notification & Reporting:**
+- Automated weekly/monthly reports via Server酱 (WeChat push)
+- Email notifications for weekly/monthly reports via SMTP
+- Transaction creation notifications via email
+- APScheduler runs scheduled tasks (Monday 09:00 weekly, 1st of month for monthly)
+- Test endpoints for manual push testing (see [docs/wechat-push.md](docs/wechat-push.md))
 
 **Fund Pool Management:**
 - Settings page includes fund pool reset functionality
@@ -240,3 +283,21 @@ Production deployment uses:
 - User: username `user`, password `user123`
 
 **Security note:** Change default passwords in production via `.env` file.
+
+## Important Notes
+
+**Notification Setup:**
+- Transaction creation triggers async email notifications if `ENABLE_TRANSACTION_NOTIFICATION=true`
+- Scheduler starts on app startup (via lifespan context in [main.py](backend/app/main.py:11))
+- Reports use APScheduler with CronTrigger for scheduled tasks
+- Server酱 free tier: 5 pushes/day (sufficient for family use)
+- SMTP password must be authorization token, not email password (especially for QQ/163 mail)
+
+**Date Constraints:**
+- All date pickers restricted to minimum date: 2025-09-01
+- Custom date ranges limited to 12-month span
+
+**API Behavior:**
+- POST `/api/transactions/` sends async notification (non-blocking response)
+- All report endpoints require admin authentication
+- Category filtering supports comma-separated values: `?category=food,transport`
