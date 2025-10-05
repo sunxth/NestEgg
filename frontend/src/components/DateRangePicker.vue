@@ -350,13 +350,18 @@ function selectShortcut(value) {
   isOpen.value = false
 }
 
-// 年份导航
+// 年份导航（不能早于2025年）
 function prevYear() {
-  currentYear.value--
+  if (currentYear.value > 2025) {
+    currentYear.value--
+  }
 }
 
 function nextYear() {
-  currentYear.value++
+  const today = new Date()
+  if (currentYear.value < today.getFullYear()) {
+    currentYear.value++
+  }
 }
 
 // 选择月份
@@ -382,11 +387,21 @@ function isMonthSelected(month) {
          tempEnd.value.getDate() === new Date(currentYear.value, month, 0).getDate()
 }
 
-// 判断月份是否禁用（未来的月份）
+// 判断月份是否禁用（2025年9月之前和未来的月份不可选）
 function isMonthDisabled(month) {
   const today = new Date()
   const currentYearNow = today.getFullYear()
   const currentMonthNow = today.getMonth() + 1
+
+  // 禁用2025年之前的所有年份
+  if (currentYear.value < 2025) {
+    return true
+  }
+
+  // 禁用2025年9月之前的月份（系统启用时间为2025年9月）
+  if (currentYear.value === 2025 && month < 9) {
+    return true
+  }
 
   // 如果年份在未来，所有月份都禁用
   if (currentYear.value > currentYearNow) {

@@ -43,8 +43,10 @@
               <!-- Year selector -->
               <div class="flex items-center justify-between mb-4">
                 <button
-                  @click.stop="pickerYear--"
-                  class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  @click.stop="prevPickerYear"
+                  :disabled="pickerYear <= 2025"
+                  :class="{'opacity-30 cursor-not-allowed': pickerYear <= 2025}"
+                  class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:hover:bg-transparent"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
@@ -54,7 +56,7 @@
                 <span class="text-base font-semibold text-gray-900 dark:text-white">{{ pickerYear }}年</span>
 
                 <button
-                  @click.stop="pickerYear++"
+                  @click.stop="nextPickerYear"
                   :disabled="pickerYear >= new Date().getFullYear()"
                   :class="{'opacity-30 cursor-not-allowed': pickerYear >= new Date().getFullYear()}"
                   class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:hover:bg-transparent"
@@ -345,9 +347,30 @@ function isMonthDisabled(year, month) {
   const currentYearNow = today.getFullYear()
   const currentMonthNow = today.getMonth() + 1
 
+  // Disable years before 2025
+  if (year < 2025) return true
+
+  // Disable months before September 2025
+  if (year === 2025 && month < 9) return true
+
+  // Disable future months
   if (year > currentYearNow) return true
   if (year === currentYearNow && month > currentMonthNow) return true
+
   return false
+}
+
+function prevPickerYear() {
+  if (pickerYear.value > 2025) {
+    pickerYear.value--
+  }
+}
+
+function nextPickerYear() {
+  const currentYearNow = new Date().getFullYear()
+  if (pickerYear.value < currentYearNow) {
+    pickerYear.value++
+  }
 }
 
 function selectMonth(month) {

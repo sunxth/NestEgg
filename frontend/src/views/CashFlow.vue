@@ -317,11 +317,11 @@ const showYearPicker = ref(false)
 const yearPickerRef = ref(null)
 const selectedYear = ref(new Date().getFullYear())
 
-// 可选年份列表（从2024年到当前年份，不包括未来年份）
+// 可选年份列表（从2025年9月系统启用开始，到当前年份）
 const availableYears = computed(() => {
   const currentYear = new Date().getFullYear()
   const years = []
-  for (let year = 2024; year <= currentYear; year++) {
+  for (let year = 2025; year <= currentYear; year++) {
     years.push(year)
   }
   return years.reverse() // 最新年份在前

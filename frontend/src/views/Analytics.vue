@@ -234,15 +234,16 @@ ChartJS.register(
 
 const transactionStore = useTransactionStore()
 
-// 动态生成年份列表：从 2024 年开始到当前年份后 2 年
+// 动态生成年份列表：从 2025 年 9 月系统启用开始到当前年份
 const currentYear = new Date().getFullYear()
-const startYear = 2024 // NestEgg 项目启动年份
+const startYear = 2025 // NestEgg 系统启用年份（2025年9月）
 const availableYears = computed(() => {
   const years = []
-  for (let year = startYear; year <= currentYear + 2; year++) {
+  // 只显示从2025年到当前年份，不包括未来年份
+  for (let year = startYear; year <= currentYear; year++) {
     years.push(year)
   }
-  return years
+  return years.reverse() // 最新年份在前
 })
 
 const selectedYear = ref(currentYear)
