@@ -77,50 +77,6 @@
         </div>
       </div>
 
-      <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:p-6">
-        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">系统信息</h3>
-
-        <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-          <div>
-            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">当前用户</dt>
-            <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-              {{ authStore.isAdmin ? '管理员' : '普通用户' }}
-            </dd>
-          </div>
-
-          <div>
-            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">权限说明</dt>
-            <dd class="mt-1 text-sm text-gray-900 dark:text-white">
-              {{ authStore.isAdmin ? '可以添加、编辑、删除记录' : '仅可查看记录' }}
-            </dd>
-          </div>
-
-          <div>
-            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">版本</dt>
-            <dd class="mt-1 text-sm text-gray-900 dark:text-white">v1.0.0</dd>
-          </div>
-
-          <div>
-            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">最后登录</dt>
-            <dd class="mt-1 text-sm text-gray-900 dark:text-white">{{ new Date().toLocaleString() }}</dd>
-          </div>
-        </dl>
-      </div>
-
-      <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-5 sm:p-6">
-        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">帮助</h3>
-
-        <div class="prose prose-sm text-gray-500 dark:text-gray-400">
-          <p>NestEgg 是一个简单的家庭记账系统，帮助您轻松管理家庭财务。</p>
-          <ul>
-            <li>管理员可以添加、编辑和删除交易记录</li>
-            <li>普通用户可以查看所有记录和统计信息</li>
-            <li>支持按类型、分类、日期筛选记录</li>
-            <li>提供月度和分类统计图表</li>
-            <li>支持数据导出和备份</li>
-          </ul>
-        </div>
-      </div>
     </div>
 
     <div v-if="message" class="mt-4 rounded-md p-4"
