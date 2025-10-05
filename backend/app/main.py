@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from .database import init_db
-from .routers import auth, transactions, export, fund_pool, reports
+from .routers import auth, transactions, export, fund_pool, reports, settings
 from .services.scheduler import start_scheduler, stop_scheduler
 
 
@@ -35,6 +35,7 @@ app.include_router(transactions.router)
 app.include_router(export.router)
 app.include_router(fund_pool.router)
 app.include_router(reports.router)
+app.include_router(settings.router)
 
 
 @app.get("/api/health")
