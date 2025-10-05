@@ -148,6 +148,21 @@ async def create_transaction(
     session.add(db_transaction)
     session.commit()
     session.refresh(db_transaction)
+
+    # 发送交易创建通知
+    from app.services.notification import notify_transaction_created
+    transaction_data = {
+        'id': db_transaction.id,
+        'date': db_transaction.date.strftime('%Y-%m-%d'),
+        'amount': str(db_transaction.amount),
+        'type': db_transaction.type,
+        'category': db_transaction.category,
+        'description': db_transaction.description or '无'
+    }
+    # 异步发送通知（不阻塞响应）
+    import asyncio
+    asyncio.create_task(notify_transaction_created(transaction_data))
+
     return db_transaction
 
 

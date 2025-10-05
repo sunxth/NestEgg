@@ -3,13 +3,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from .database import init_db
-from .routers import auth, transactions, export, fund_pool
+from .routers import auth, transactions, export, fund_pool, reports
+from .services.scheduler import start_scheduler, stop_scheduler
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     init_db()
+    start_scheduler()  # 启动定时任务
     yield
+    stop_scheduler()  # 停止定时任务
 
 
 app = FastAPI(
@@ -31,6 +34,7 @@ app.include_router(auth.router)
 app.include_router(transactions.router)
 app.include_router(export.router)
 app.include_router(fund_pool.router)
+app.include_router(reports.router)
 
 
 @app.get("/api/health")
