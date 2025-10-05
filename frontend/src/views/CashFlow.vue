@@ -2,7 +2,51 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 page-fade-in">
     <!-- Header -->
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">交易记录</h1>
+      <div class="flex items-center gap-4">
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">交易记录</h1>
+
+        <!-- 年份选择器 -->
+        <div class="relative" ref="yearPickerRef">
+          <button
+            @click="showYearPicker = !showYearPicker"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm dark:shadow-gray-700/30 hover:shadow-md hover:border-indigo-300 dark:hover:border-indigo-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+          >
+            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ selectedYear }}年</span>
+            <svg class="w-4 h-4 text-gray-400 transition-transform" :class="showYearPicker ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <!-- 年份下拉菜单 -->
+          <Transition
+            enter-active-class="transition duration-100 ease-out"
+            enter-from-class="opacity-0 scale-95"
+            enter-to-class="opacity-100 scale-100"
+            leave-active-class="transition duration-75 ease-in"
+            leave-from-class="opacity-100 scale-100"
+            leave-to-class="opacity-0 scale-95"
+          >
+            <div
+              v-if="showYearPicker"
+              class="absolute left-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg dark:shadow-gray-700/50 border border-gray-200 dark:border-gray-700 py-2 z-10 max-h-64 overflow-y-auto"
+            >
+              <button
+                v-for="year in availableYears"
+                :key="year"
+                @click="selectYear(year)"
+                class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                :class="selectedYear === year ? 'text-indigo-600 dark:text-indigo-400 font-medium bg-indigo-50 dark:bg-indigo-900/30' : 'text-gray-700 dark:text-gray-300'"
+              >
+                {{ year }}年
+              </button>
+            </div>
+          </Transition>
+        </div>
+      </div>
+
       <button
         v-if="authStore.isAdmin"
         @click="showAddModal = true"
@@ -259,7 +303,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useTransactionStore } from '@/stores/transaction'
 import AddTransactionModal from '@/components/AddTransactionModal.vue'
@@ -268,8 +312,23 @@ import EditTransactionModal from '@/components/EditTransactionModal.vue'
 const authStore = useAuthStore()
 const transactionStore = useTransactionStore()
 
-// 从 localStorage 恢复筛选状态，默认为"本周"
-const savedTimeRange = localStorage.getItem('cashflow_timeRange') || 'week'
+// 年份选择器状态
+const showYearPicker = ref(false)
+const yearPickerRef = ref(null)
+const selectedYear = ref(new Date().getFullYear())
+
+// 可选年份列表（从2024年到当前年份，不包括未来年份）
+const availableYears = computed(() => {
+  const currentYear = new Date().getFullYear()
+  const years = []
+  for (let year = 2024; year <= currentYear; year++) {
+    years.push(year)
+  }
+  return years.reverse() // 最新年份在前
+})
+
+// 从 localStorage 恢复筛选状态，默认为"过去7天"
+const savedTimeRange = localStorage.getItem('cashflow_timeRange') || '7days'
 const savedType = localStorage.getItem('cashflow_type') || ''
 const savedCategories = JSON.parse(localStorage.getItem('cashflow_categories') || '[]')
 
@@ -292,10 +351,10 @@ const summary = ref({
 
 // 时间范围选项
 const timeRangeOptions = [
-  { value: 'week', label: '本周' },
-  { value: 'month', label: '本月' },
-  { value: 'quarter', label: '本季度' },
-  { value: 'year', label: '本年' }
+  { value: '7days', label: '过去7天' },
+  { value: '30days', label: '过去30天' },
+  { value: '90days', label: '过去90天' },
+  { value: 'year', label: '年度全部' }
 ]
 
 // 分类配置
@@ -415,25 +474,41 @@ function toggleCategory(category) {
   loadData()
 }
 
+function selectYear(year) {
+  selectedYear.value = year
+  showYearPicker.value = false
+  loadData()
+}
+
+// 点击外部关闭年份选择器
+function handleClickOutside(event) {
+  if (yearPickerRef.value && !yearPickerRef.value.contains(event.target)) {
+    showYearPicker.value = false
+  }
+}
+
 async function loadData() {
   const now = new Date()
   let startDate
   let endDate = new Date()
 
   switch(timeRange.value) {
-    case 'week':
+    case '7days':
       startDate = new Date()
       startDate.setDate(startDate.getDate() - 7)
       break
-    case 'month':
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1)
+    case '30days':
+      startDate = new Date()
+      startDate.setDate(startDate.getDate() - 30)
       break
-    case 'quarter':
-      const quarter = Math.floor(now.getMonth() / 3)
-      startDate = new Date(now.getFullYear(), quarter * 3, 1)
+    case '90days':
+      startDate = new Date()
+      startDate.setDate(startDate.getDate() - 90)
       break
     case 'year':
-      startDate = new Date(now.getFullYear(), 0, 1)
+      // 年度全部：选定年份的1月1日到12月31日
+      startDate = new Date(selectedYear.value, 0, 1)
+      endDate = new Date(selectedYear.value, 11, 31, 23, 59, 59, 999)
       break
   }
 
@@ -500,6 +575,11 @@ function handleSuccess() {
 
 onMounted(() => {
   loadData()
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
 })
 </script>
 
