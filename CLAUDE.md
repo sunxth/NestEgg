@@ -31,12 +31,13 @@ cd backend
 python3 -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 
-# Install dependencies
+# Install dependencies (recommended - uses pyproject.toml)
 pip install uv
-uv pip install fastapi uvicorn sqlmodel "python-jose[cryptography]" python-multipart pydantic-settings
+uv pip install -e ".[dev]"  # Installs all dependencies including dev tools
 
-# Optional dev dependencies
-uv pip install pytest httpx ruff
+# OR manual installation
+uv pip install fastapi uvicorn sqlmodel "python-jose[cryptography]" python-multipart pydantic-settings
+uv pip install pytest httpx ruff  # dev dependencies
 
 # Start development server
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
@@ -85,6 +86,7 @@ backend/app/
 │   ├── transactions.py  # CRUD + stats endpoints
 │   ├── fund_pool.py  # GET /api/fund-pool/
 │   ├── reports.py    # Weekly/monthly reports and push testing
+│   ├── settings.py   # GET/PUT /api/settings/notifications
 │   └── export.py     # CSV export, database backup
 └── services/
     ├── notification.py  # Transaction notification service (email)
@@ -178,6 +180,12 @@ frontend/src/
 - `GET /api/reports/preview/monthly` - Preview monthly report markdown
 - `POST /api/reports/test-push` - Test Server酱 push notification
   - Body: `{"send_keys": ["SCT123xxx"], "report_type": "weekly|monthly"}`
+
+**Settings (admin only):**
+- `GET /api/settings/notifications` - Get current notification settings
+- `PUT /api/settings/notifications` - Update notification settings
+  - Updates Server酱 and email notification configuration
+  - Restarts scheduler to apply new settings
 
 **Health:**
 - `GET /api/health` - Service health check

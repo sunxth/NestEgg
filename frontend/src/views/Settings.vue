@@ -558,11 +558,12 @@ onMounted(() => {
   }
 }
 
-/* Apple 风格数字字体 */
+/* 专业数字字体 - Inter */
 .apple-numbers {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-  font-feature-settings: 'tnum' 1;
+  letter-spacing: -0.015em;
+  font-feature-settings: 'tnum' 1, 'cv05' 1, 'cv11' 1;
+  font-weight: 600;
 }
 </style>

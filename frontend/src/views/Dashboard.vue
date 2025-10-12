@@ -9,70 +9,6 @@
         </div>
       </div>
 
-      <!-- 核心指标区 - 两大指标横向排列 -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <!-- 净收入 -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30 hover:shadow-lg dark:hover:shadow-gray-700/50 hover:-translate-y-1 transition-all duration-300">
-          <div class="mb-2">
-            <span class="text-sm text-gray-500 dark:text-gray-400">{{ periodLabel }}净收入</span>
-          </div>
-          <p class="text-3xl font-semibold leading-tight apple-numbers" :class="monthlyNet >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600'">
-            {{ monthlyNet >= 0 ? '+' : '-' }}¥{{ Math.abs(monthlyNet).toFixed(0) }}
-          </p>
-          <div class="flex items-center gap-4 mt-2">
-            <span class="text-xs text-gray-500 dark:text-gray-400 apple-numbers">
-              收入 ¥{{ monthlyIncome.toFixed(0) }}
-            </span>
-            <span class="text-xs text-gray-500 dark:text-gray-400 apple-numbers">
-              支出 ¥{{ monthlyExpense.toFixed(0) }}
-            </span>
-          </div>
-        </div>
-
-        <!-- 储蓄率 -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm dark:shadow-gray-700/30 hover:shadow-lg dark:hover:shadow-gray-700/50 hover:-translate-y-1 transition-all duration-300">
-          <div class="flex items-start justify-between mb-4">
-            <div>
-              <span class="text-sm text-gray-500 dark:text-gray-400">储蓄率</span>
-              <p class="text-3xl font-semibold text-gray-900 dark:text-white mt-1 leading-tight apple-numbers">{{ savingRate.toFixed(0) }}%</p>
-            </div>
-            <!-- 环形图标 -->
-            <div class="relative w-16 h-16">
-              <svg class="transform -rotate-90" width="64" height="64">
-                <circle cx="32" cy="32" r="28" fill="none" stroke="#E5E7EB" stroke-width="6"/>
-                <circle cx="32" cy="32" r="28" fill="none"
-                        :stroke="savingRate >= 30 ? '#10B981' : savingRate >= 10 ? '#F59E0B' : '#EF4444'"
-                        stroke-width="6"
-                        :stroke-dasharray="`${2 * Math.PI * 28}`"
-                        :stroke-dashoffset="`${2 * Math.PI * 28 * (1 - Math.min(savingRate, 100) / 100)}`"
-                        class="transition-all duration-500"
-                        stroke-linecap="round"/>
-              </svg>
-              <div class="absolute inset-0 flex items-center justify-center">
-                <span class="text-xs font-bold apple-numbers" :class="savingRate >= 30 ? 'text-green-600' : savingRate >= 10 ? 'text-yellow-600' : 'text-red-600'">
-                  {{ savingRate.toFixed(0) }}%
-                </span>
-              </div>
-            </div>
-          </div>
-          <!-- 进度条 -->
-          <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-2">
-            <div class="h-3 rounded-full transition-all duration-500"
-                 :class="savingRate >= 30 ? 'bg-green-500' : savingRate >= 10 ? 'bg-yellow-500' : 'bg-red-500'"
-                 :style="{width: `${Math.min(savingRate, 100)}%`}"></div>
-          </div>
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-medium"
-                  :class="savingRate >= 30 ? 'text-green-600' : savingRate >= 10 ? 'text-yellow-600' : 'text-red-600'">
-              {{ savingRate >= 30 ? '✨ 优秀' : savingRate >= 10 ? '👍 良好' : '⚠️ 需要改善' }}
-            </span>
-            <span class="text-xs text-gray-500 dark:text-gray-400">
-              目标: 30%
-            </span>
-          </div>
-        </div>
-      </div>
-
       <!-- 资产和流动性区 -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <!-- 资金池余额 -->
@@ -136,6 +72,70 @@
                 </span>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 核心指标区 - 缩小版 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <!-- 净收入 -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30 hover:shadow-md dark:hover:shadow-gray-700/50 transition-all duration-300">
+          <div class="mb-1">
+            <span class="text-xs text-gray-500 dark:text-gray-400">{{ periodLabel }}净收入</span>
+          </div>
+          <p class="text-2xl font-bold leading-tight apple-numbers" :class="monthlyNet >= 0 ? 'text-gray-900 dark:text-white' : 'text-red-600'">
+            {{ monthlyNet >= 0 ? '+' : '-' }}¥{{ Math.abs(monthlyNet).toFixed(0) }}
+          </p>
+          <div class="flex items-center gap-3 mt-1.5">
+            <span class="text-xs text-gray-500 dark:text-gray-400 apple-numbers">
+              收入 ¥{{ monthlyIncome.toFixed(0) }}
+            </span>
+            <span class="text-xs text-gray-500 dark:text-gray-400 apple-numbers">
+              支出 ¥{{ monthlyExpense.toFixed(0) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- 储蓄率 -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm dark:shadow-gray-700/30 hover:shadow-md dark:hover:shadow-gray-700/50 transition-all duration-300">
+          <div class="flex items-start justify-between mb-2">
+            <div>
+              <span class="text-xs text-gray-500 dark:text-gray-400">储蓄率</span>
+              <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1 leading-tight apple-numbers">{{ savingRate.toFixed(0) }}%</p>
+            </div>
+            <!-- 环形图标 - 缩小版 -->
+            <div class="relative w-12 h-12">
+              <svg class="transform -rotate-90" width="48" height="48">
+                <circle cx="24" cy="24" r="20" fill="none" stroke="#E5E7EB" stroke-width="4"/>
+                <circle cx="24" cy="24" r="20" fill="none"
+                        :stroke="savingRate >= 30 ? '#10B981' : savingRate >= 10 ? '#F59E0B' : '#EF4444'"
+                        stroke-width="4"
+                        :stroke-dasharray="`${2 * Math.PI * 20}`"
+                        :stroke-dashoffset="`${2 * Math.PI * 20 * (1 - Math.min(savingRate, 100) / 100)}`"
+                        class="transition-all duration-500"
+                        stroke-linecap="round"/>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-xs font-bold apple-numbers" :class="savingRate >= 30 ? 'text-green-600' : savingRate >= 10 ? 'text-yellow-600' : 'text-red-600'">
+                  {{ savingRate.toFixed(0) }}%
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- 进度条 -->
+          <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-1.5">
+            <div class="h-2 rounded-full transition-all duration-500"
+                 :class="savingRate >= 30 ? 'bg-green-500' : savingRate >= 10 ? 'bg-yellow-500' : 'bg-red-500'"
+                 :style="{width: `${Math.min(savingRate, 100)}%`}"></div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-medium"
+                  :class="savingRate >= 30 ? 'text-green-600' : savingRate >= 10 ? 'text-yellow-600' : 'text-red-600'">
+              {{ savingRate >= 30 ? '✨ 优秀' : savingRate >= 10 ? '👍 良好' : '⚠️ 需要改善' }}
+            </span>
+            <span class="text-xs text-gray-500 dark:text-gray-400">
+              目标: 30%
+            </span>
           </div>
         </div>
       </div>
@@ -763,11 +763,12 @@ onUnmounted(() => {
   }
 }
 
-/* Apple 风格数字字体 */
+/* 专业数字字体 - Inter */
 :deep(.apple-numbers) {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-  font-feature-settings: 'tnum' 1;
+  letter-spacing: -0.015em;
+  font-feature-settings: 'tnum' 1, 'cv05' 1, 'cv11' 1;
+  font-weight: 600;
 }
 </style>
